@@ -1,4 +1,10 @@
 # 실습 과제 진행
+#
+# 과제 요구사항
+#   1. 캐릭터가 원 경로를 한 바퀴 이동한다.        move_circle
+#   2. 캐릭터가 사각형 경로를 한 바퀴 이동한다.    move_rectangle
+#   3. 캐릭터가 삼각형 경로를 한 바퀴 이동한다.    move_triangle
+#   4. 위 세 운동을 원 -> 사각 -> 삼각 순서로 무한 반복한다.
 
 from pico2d import *
 import math
