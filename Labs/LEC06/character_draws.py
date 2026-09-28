@@ -3,6 +3,9 @@
 from pico2d import *
 import math
 
+# --- 공통 설정 ---
+FRAME_DELAY = 0.01
+
 # --- 캔버스 크기 ---
 CANVAS_W = 800
 CANVAS_H = 600
@@ -29,7 +32,7 @@ def draw_character(x, y):
     clear_canvas()
     character.draw(x, y)
     update_canvas()
-    delay(0.01)
+    delay(FRAME_DELAY)
 
 
 def move_circle():
