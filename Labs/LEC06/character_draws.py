@@ -91,22 +91,12 @@ def move_segment(x0, y0, x1, y1):
         draw_character(x, y)
 
 
-def move_ab():
-    move_segment(TRIANGLE_A[0], TRIANGLE_A[1], TRIANGLE_B[0], TRIANGLE_B[1])
-
-
-def move_bc():
-    move_segment(TRIANGLE_B[0], TRIANGLE_B[1], TRIANGLE_C[0], TRIANGLE_C[1])
-
-
-def move_ca():
-    move_segment(TRIANGLE_C[0], TRIANGLE_C[1], TRIANGLE_A[0], TRIANGLE_A[1])
-
-
 def move_triangle():
-    move_ab()
-    move_bc()
-    move_ca()
+    points = [TRIANGLE_A, TRIANGLE_B, TRIANGLE_C]
+    for i in range(3):
+        start = points[i]
+        end = points[(i + 1) % 3]
+        move_segment(start[0], start[1], end[0], end[1])
 
 
 while True:
