@@ -20,7 +20,7 @@ MARGIN = 50
 EDGE_STEP = 5
 
 # --- 삼각형 경로 ---
-SEGMENTS = 40
+TRIANGLE_SEGMENTS = 40
 A = (100, 100)
 B = (700, 100)
 C = (400, 500)
@@ -83,8 +83,8 @@ def interpolate(x0, y0, x1, y1, t):
 
 def move_segment(x0, y0, x1, y1):
     # 두 점을 잇는 선분을 TRIANGLE_SEGMENTS 등분해서 이동한다.
-    for step in range(SEGMENTS + 1):
-        t = step / SEGMENTS
+    for step in range(TRIANGLE_SEGMENTS + 1):
+        t = step / TRIANGLE_SEGMENTS
         x, y = interpolate(x0, y0, x1, y1, t)
         draw_character(x, y)
 
