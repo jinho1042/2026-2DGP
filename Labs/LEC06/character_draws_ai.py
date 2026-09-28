@@ -1,3 +1,11 @@
+# AI로 작성한 LEC06 실습 과제 완성본
+#
+# 요구사항
+#   1. 캐릭터가 원 경로를 한 바퀴 이동한다.
+#   2. 캐릭터가 사각형 경로를 한 바퀴 이동한다.
+#   3. 캐릭터가 삼각형 경로를 한 바퀴 이동한다.
+#   4. 위 세 운동을 원 -> 사각 -> 삼각 순서로 무한 반복한다.
+
 from pico2d import *
 import math
 
@@ -99,7 +107,13 @@ def move_triangle() -> None:
         move_segment(start[0], start[1], end[0], end[1])
 
 
-while True:
-    move_circle()
-    move_rectangle()
-    move_triangle()
+def main() -> None:
+    """원, 사각, 삼각 운동을 순서대로 무한 반복한다."""
+    while True:
+        move_circle()
+        move_rectangle()
+        move_triangle()
+
+
+if __name__ == '__main__':
+    main()
