@@ -71,10 +71,7 @@ def move_ab():
         t = step / SEGMENTS
         x, y = interpolate(A[0], A[1], B[0], B[1], t)
 
-        clear_canvas()
-        character.draw(x, y)
-        update_canvas()
-        delay(0.01)
+        draw_character(x, y)
 
 
 def move_bc():
@@ -82,10 +79,7 @@ def move_bc():
         t = step / SEGMENTS
         x, y = interpolate(B[0], B[1], C[0], C[1], t)
 
-        clear_canvas()
-        character.draw(x, y)
-        update_canvas()
-        delay(0.01)
+        draw_character(x, y)
 
 
 def move_ca():
@@ -93,10 +87,7 @@ def move_ca():
         t = step / SEGMENTS
         x, y = interpolate(C[0], C[1], A[0], A[1], t)
 
-        clear_canvas()
-        character.draw(x, y)
-        update_canvas()
-        delay(0.01)
+        draw_character(x, y)
 
 
 def move_triangle():
