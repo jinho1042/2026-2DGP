@@ -8,6 +8,9 @@ open_canvas()
 
 character = load_image('character.png')
 
+# 삼각형 한 변을 나누는 구간 수
+SEGMENTS = 40
+
 # 삼각형 꼭짓점
 A = (100, 100)
 B = (700, 100)
@@ -73,7 +76,14 @@ def interpolate(x0, y0, x1, y1, t):
 
 
 def move_ab():
-    print('ab')
+    for step in range(SEGMENTS + 1):
+        t = step / SEGMENTS
+        x, y = interpolate(A[0], A[1], B[0], B[1], t)
+
+        clear_canvas()
+        character.draw(x, y)
+        update_canvas()
+        delay(0.01)
 
 
 def move_triangle():
