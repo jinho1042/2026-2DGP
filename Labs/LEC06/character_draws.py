@@ -97,10 +97,15 @@ def move_bc():
         delay(0.01)
 
 
+def move_ca():
+    print('ca')
+
+
 def move_triangle():
     print('triangle')
     move_ab()
     move_bc()
+    move_ca()
 
 
 while True:
