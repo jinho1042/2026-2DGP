@@ -11,6 +11,7 @@ CANVAS_W = 800
 CANVAS_H = 600
 
 # --- 원운동 경로 ---
+FULL_TURN = 360
 CENTER_X = 400
 CENTER_Y = 300
 RADIUS = 200
@@ -40,7 +41,7 @@ def draw_character(x, y):
 
 
 def move_circle():
-    for degree in range(360):
+    for degree in range(FULL_TURN):
         theta = math.radians(degree)
         x = CENTER_X + RADIUS * math.cos(theta)
         y = CENTER_Y + RADIUS * math.sin(theta)
