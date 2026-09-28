@@ -8,6 +8,7 @@
 
 from pico2d import *
 import math
+import os
 
 # --- 공통 설정 ---
 CANVAS_W = 800
@@ -32,7 +33,8 @@ TRIANGLE_C = (400, 500)
 
 open_canvas(CANVAS_W, CANVAS_H)
 
-character = load_image('character.png')
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+character = load_image(os.path.join(SCRIPT_DIR, 'character.png'))
 
 
 def draw_character(x: float, y: float) -> None:
