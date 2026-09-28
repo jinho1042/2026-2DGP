@@ -98,7 +98,14 @@ def move_bc():
 
 
 def move_ca():
-    print('ca')
+    for step in range(SEGMENTS + 1):
+        t = step / SEGMENTS
+        x, y = interpolate(C[0], C[1], A[0], A[1], t)
+
+        clear_canvas()
+        character.draw(x, y)
+        update_canvas()
+        delay(0.01)
 
 
 def move_triangle():
