@@ -3,18 +3,21 @@
 from pico2d import *
 import math
 
-open_canvas()
+# --- 캔버스 크기 ---
+CANVAS_W = 800
+CANVAS_H = 600
+
+# --- 삼각형 경로 ---
+SEGMENTS = 40
+A = (100, 100)
+B = (700, 100)
+C = (400, 500)
+
+open_canvas(CANVAS_W, CANVAS_H)
 
 
 character = load_image('character.png')
 
-# 삼각형 한 변을 나누는 구간 수
-SEGMENTS = 40
-
-# 삼각형 꼭짓점
-A = (100, 100)
-B = (700, 100)
-C = (400, 500)
 
 def draw_character(x, y):
     # 좌표 계산과 화면 출력을 분리한 공통 그리기 함수
