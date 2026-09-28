@@ -15,6 +15,9 @@ CENTER_X = 400
 CENTER_Y = 300
 RADIUS = 200
 
+# --- 사각형 경로 ---
+MARGIN = 50
+
 # --- 삼각형 경로 ---
 SEGMENTS = 40
 A = (100, 100)
@@ -46,19 +49,19 @@ def move_circle():
 
 def draw_right():
     for x in range(50, 750,5):
-        draw_character(x, 550)
+        draw_character(x, CANVAS_H - MARGIN)
 
 def draw_left():
     for x in range(750, 50, -5):
-        draw_character(x, 50)
+        draw_character(x, MARGIN)
 
 def draw_top():
     for y in range(50, 550, 5):
-        draw_character(50, y)
+        draw_character(MARGIN, y)
 
 def draw_bottom():
     for y in range(550, 50, -5):
-        draw_character(750, y)
+        draw_character(CANVAS_W - MARGIN, y)
 
     
 
