@@ -34,7 +34,6 @@ TRIANGLE_C = (400, 500)
 
 open_canvas(CANVAS_W, CANVAS_H)
 
-
 character = load_image('character.png')
 
 
@@ -87,8 +86,7 @@ def move_rectangle() -> None:
     move_right()
     move_bottom()
     move_left()
-    
-  
+
 
 def interpolate(x0: float, y0: float, x1: float, y1: float, t: float) -> tuple:
     """두 점을 잇는 선분 위의 좌표를 계산."""
@@ -126,5 +124,3 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
-
-   
