@@ -48,8 +48,23 @@ def move_rectangle():
     move_left()
 
 
+def interpolate(x0, y0, x1, y1, t):
+    return x0 + (x1 - x0) * t, y0 + (y1 - y0) * t
+
+
+def move_segment(x0, y0, x1, y1):
+    for step in range(41):
+        t = step / 40
+        x, y = interpolate(x0, y0, x1, y1, t)
+        draw_character(x, y)
+
+
 def move_triangle():
-    pass
+    points = [(100, 100), (700, 100), (400, 500)]
+    for i in range(len(points)):
+        start = points[i]
+        end = points[(i + 1) % len(points)]
+        move_segment(start[0], start[1], end[0], end[1])
 
 
 while True:
