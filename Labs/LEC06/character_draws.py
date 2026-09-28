@@ -10,6 +10,7 @@ CANVAS_H = 600
 # --- 원운동 경로 ---
 CENTER_X = 400
 CENTER_Y = 300
+RADIUS = 200
 
 # --- 삼각형 경로 ---
 SEGMENTS = 40
@@ -34,8 +35,8 @@ def draw_character(x, y):
 def move_circle():
     for degree in range(360):
         theta = math.radians(degree)
-        x = CENTER_X + 200 * math.cos(theta)
-        y = CENTER_Y + 200 * math.sin(theta)
+        x = CENTER_X + RADIUS * math.cos(theta)
+        y = CENTER_Y + RADIUS * math.sin(theta)
 
         draw_character(x, y)
 
