@@ -1,66 +1,98 @@
 from pico2d import *
 import math
 
-open_canvas(800, 600)
+# --- 공통 설정 ---
+CANVAS_W = 800
+CANVAS_H = 600
+FRAME_DELAY = 0.01
+
+# --- 원운동 경로 ---
+FULL_TURN = 360
+CENTER_X = 400
+CENTER_Y = 300
+RADIUS = 200
+
+# --- 사각형 경로 ---
+MARGIN = 50
+EDGE_STEP = 5
+
+# --- 삼각형 경로 ---
+TRIANGLE_SEGMENTS = 40
+TRIANGLE_A = (100, 100)
+TRIANGLE_B = (700, 100)
+TRIANGLE_C = (400, 500)
+
+open_canvas(CANVAS_W, CANVAS_H)
 
 character = load_image('character.png')
 
 
-def draw_character(x, y):
+def draw_character(x: float, y: float) -> None:
+    """계산한 좌표에 캐릭터를 그리고 화면을 갱신한다."""
     clear_canvas()
     character.draw(x, y)
     update_canvas()
-    delay(0.01)
+    delay(FRAME_DELAY)
 
 
-def move_circle():
-    for degree in range(360):
+def interpolate(x0: float, y0: float,
+                x1: float, y1: float, t: float) -> tuple:
+    """두 점을 잇는 선분 위에서 진행 비율 t 만큼 이동한 좌표."""
+    return x0 + (x1 - x0) * t, y0 + (y1 - y0) * t
+
+
+def move_circle() -> None:
+    """원 경로를 한 바퀴 이동한다."""
+    for degree in range(FULL_TURN):
         theta = math.radians(degree)
-        x = 400 + 200 * math.cos(theta)
-        y = 300 + 200 * math.sin(theta)
+        x = CENTER_X + RADIUS * math.cos(theta)
+        y = CENTER_Y + RADIUS * math.sin(theta)
         draw_character(x, y)
 
 
-def move_top():
-    for x in range(50, 751, 5):
-        draw_character(x, 550)
+def move_top() -> None:
+    """사각형 상단 변을 오른쪽으로 이동한다."""
+    for x in range(MARGIN, CANVAS_W - MARGIN + 1, EDGE_STEP):
+        draw_character(x, CANVAS_H - MARGIN)
 
 
-def move_right():
-    for y in range(550, 49, -5):
-        draw_character(750, y)
+def move_right() -> None:
+    """사각형 오른쪽 변을 위로 이동한다."""
+    for y in range(CANVAS_H - MARGIN, MARGIN - 1, -EDGE_STEP):
+        draw_character(CANVAS_W - MARGIN, y)
 
 
-def move_bottom():
-    for x in range(750, 49, -5):
-        draw_character(x, 50)
+def move_bottom() -> None:
+    """사각형 하단 변을 왼쪽으로 이동한다."""
+    for x in range(CANVAS_W - MARGIN, MARGIN - 1, -EDGE_STEP):
+        draw_character(x, MARGIN)
 
 
-def move_left():
-    for y in range(50, 551, 5):
-        draw_character(50, y)
+def move_left() -> None:
+    """사각형 왼쪽 변을 아래로 이동한다."""
+    for y in range(MARGIN, CANVAS_H - MARGIN + 1, EDGE_STEP):
+        draw_character(MARGIN, y)
 
 
-def move_rectangle():
+def move_rectangle() -> None:
+    """사각형 네 변을 시계 방향으로 연결한다."""
     move_top()
     move_right()
     move_bottom()
     move_left()
 
 
-def interpolate(x0, y0, x1, y1, t):
-    return x0 + (x1 - x0) * t, y0 + (y1 - y0) * t
-
-
-def move_segment(x0, y0, x1, y1):
-    for step in range(41):
-        t = step / 40
+def move_segment(x0: float, y0: float, x1: float, y1: float) -> None:
+    """두 점 사이를 등간격으로 이동한다."""
+    for step in range(TRIANGLE_SEGMENTS + 1):
+        t = step / TRIANGLE_SEGMENTS
         x, y = interpolate(x0, y0, x1, y1, t)
         draw_character(x, y)
 
 
-def move_triangle():
-    points = [(100, 100), (700, 100), (400, 500)]
+def move_triangle() -> None:
+    """삼각형 세 변을 연결한다."""
+    points = [TRIANGLE_A, TRIANGLE_B, TRIANGLE_C]
     for i in range(len(points)):
         start = points[i]
         end = points[(i + 1) % len(points)]
