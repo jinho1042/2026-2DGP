@@ -8,6 +8,11 @@ open_canvas()
 
 character = load_image('character.png')
 
+# 삼각형 꼭짓점
+A = (100, 100)
+B = (700, 100)
+C = (400, 500)
+
 def move_circle():
     for degree in range(360):
         theta = math.radians(degree)
