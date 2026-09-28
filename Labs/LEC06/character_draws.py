@@ -66,28 +66,24 @@ def interpolate(x0, y0, x1, y1, t):
     return x, y
 
 
-def move_ab():
+def move_segment(x0, y0, x1, y1):
+    # 두 점을 잇는 선분을 TRIANGLE_SEGMENTS 등분해서 이동한다.
     for step in range(SEGMENTS + 1):
         t = step / SEGMENTS
-        x, y = interpolate(A[0], A[1], B[0], B[1], t)
-
+        x, y = interpolate(x0, y0, x1, y1, t)
         draw_character(x, y)
+
+
+def move_ab():
+    move_segment(A[0], A[1], B[0], B[1])
 
 
 def move_bc():
-    for step in range(SEGMENTS + 1):
-        t = step / SEGMENTS
-        x, y = interpolate(B[0], B[1], C[0], C[1], t)
-
-        draw_character(x, y)
+    move_segment(B[0], B[1], C[0], C[1])
 
 
 def move_ca():
-    for step in range(SEGMENTS + 1):
-        t = step / SEGMENTS
-        x, y = interpolate(C[0], C[1], A[0], A[1], t)
-
-        draw_character(x, y)
+    move_segment(C[0], C[1], A[0], A[1])
 
 
 def move_triangle():
