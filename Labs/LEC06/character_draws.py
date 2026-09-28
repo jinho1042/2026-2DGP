@@ -17,6 +17,7 @@ RADIUS = 200
 
 # --- 사각형 경로 ---
 MARGIN = 50
+EDGE_STEP = 5
 
 # --- 삼각형 경로 ---
 SEGMENTS = 40
@@ -48,19 +49,19 @@ def move_circle():
 
 
 def draw_right():
-    for x in range(50, 750,5):
+    for x in range(MARGIN, CANVAS_W - MARGIN + 1, EDGE_STEP):
         draw_character(x, CANVAS_H - MARGIN)
 
 def draw_left():
-    for x in range(750, 50, -5):
+    for x in range(CANVAS_W - MARGIN, MARGIN - 1, -EDGE_STEP):
         draw_character(x, MARGIN)
 
 def draw_top():
-    for y in range(50, 550, 5):
+    for y in range(MARGIN, CANVAS_H - MARGIN + 1, EDGE_STEP):
         draw_character(MARGIN, y)
 
 def draw_bottom():
-    for y in range(550, 50, -5):
+    for y in range(CANVAS_H - MARGIN, MARGIN - 1, -EDGE_STEP):
         draw_character(CANVAS_W - MARGIN, y)
 
     
