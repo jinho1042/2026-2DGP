@@ -99,9 +99,14 @@ def move_triangle():
         move_segment(start[0], start[1], end[0], end[1])
 
 
-while True:
-    move_circle()
-    move_rectangle()
-    move_triangle()
+def main():
+    while True:
+        move_circle()
+        move_rectangle()
+        move_triangle()
+
+
+if __name__ == '__main__':
+    main()
 
    
