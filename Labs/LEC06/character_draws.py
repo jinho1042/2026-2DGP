@@ -72,9 +72,14 @@ def interpolate(x0, y0, x1, y1, t):
     return x, y
 
 
+def move_ab():
+    print('ab')
+
+
 def move_triangle():
     print('triangle')
-    
+    move_ab()
+
 
 while True:
     # move_circle()
