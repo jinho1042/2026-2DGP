@@ -65,6 +65,13 @@ def move_rectangle():
     
   
 
+def interpolate(x0, y0, x1, y1, t):
+    # 두 점을 잇는 선분 위에서 t만큼 진행한 좌표를 계산한다.
+    x = x0 + (x1 - x0) * t
+    y = y0 + (y1 - y0) * t
+    return x, y
+
+
 def move_triangle():
     print('triangle')
     
