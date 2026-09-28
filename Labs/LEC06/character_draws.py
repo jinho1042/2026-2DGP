@@ -16,17 +16,21 @@ A = (100, 100)
 B = (700, 100)
 C = (400, 500)
 
+def draw_character(x, y):
+    # 좌표 계산과 화면 출력을 분리한 공통 그리기 함수
+    clear_canvas()
+    character.draw(x, y)
+    update_canvas()
+    delay(0.01)
+
+
 def move_circle():
     for degree in range(360):
         theta = math.radians(degree)
         x = 400 + 200 * math.cos(theta)
         y = 300 + 200 * math.sin(theta)
 
-        clear_canvas()
-        character.draw(x, y)
-        update_canvas()
-        delay(0.01)
-    
+        draw_character(x, y)
 
 
 def draw_right():
