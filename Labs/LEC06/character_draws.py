@@ -18,40 +18,55 @@ def move_circle():
         character.draw(x, y)
         update_canvas()
         delay(0.01)
-    pass
+    
 
+
+def draw_right():
+    for x in range(50, 750,5):
+        clear_canvas()
+        character.draw(x, 550)
+        update_canvas()
+        delay(0.01)
+
+def draw_left():
+    for x in range(750, 50, -5):
+        clear_canvas()
+        character.draw(x, 50)
+        update_canvas()
+        delay(0.01)
 
 def draw_top():
-    print('Top')
-    pass
+    for y in range(50, 550, 5):
+        clear_canvas()
+        character.draw(50, y)
+        update_canvas()
+        delay(0.01)
+
 def draw_bottom():
-    print('Bottom')
-    pass
-def draw_left():
-    print('Left')
-    pass
-def draw_right():
-    print('Right')
-    pass
+    for y in range(550, 50, -5):
+        clear_canvas()  
+        character.draw(750, y)
+        update_canvas()
+        delay(0.01)
 
-
-
+    
 
 def move_rectangle():
     print('rectangle')
     draw_top()
+    draw_right()
     draw_bottom()
     draw_left()
-    draw_right()
-    pass
+    
+  
 
 def move_triangle():
     print('triangle')
-    pass
+    
 
 while True:
-    move_circle()
+    # move_circle()
     move_rectangle()
     move_triangle()
 
-    pass
+   
