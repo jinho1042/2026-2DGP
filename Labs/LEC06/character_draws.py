@@ -48,23 +48,25 @@ def move_circle():
         draw_character(x, y)
 
 
-def move_right():
+def move_top():
     for x in range(MARGIN, CANVAS_W - MARGIN + 1, EDGE_STEP):
         draw_character(x, CANVAS_H - MARGIN)
 
-def move_left():
-    for x in range(CANVAS_W - MARGIN, MARGIN - 1, -EDGE_STEP):
-        draw_character(x, MARGIN)
 
-def move_top():
-    for y in range(MARGIN, CANVAS_H - MARGIN + 1, EDGE_STEP):
-        draw_character(MARGIN, y)
-
-def move_bottom():
+def move_right():
     for y in range(CANVAS_H - MARGIN, MARGIN - 1, -EDGE_STEP):
         draw_character(CANVAS_W - MARGIN, y)
 
-    
+
+def move_bottom():
+    for x in range(CANVAS_W - MARGIN, MARGIN - 1, -EDGE_STEP):
+        draw_character(x, MARGIN)
+
+
+def move_left():
+    for y in range(MARGIN, CANVAS_H - MARGIN + 1, EDGE_STEP):
+        draw_character(MARGIN, y)
+
 
 def move_rectangle():
     move_top()
