@@ -21,9 +21,9 @@ EDGE_STEP = 5
 
 # --- 삼각형 경로 ---
 TRIANGLE_SEGMENTS = 40
-A = (100, 100)
-B = (700, 100)
-C = (400, 500)
+TRIANGLE_A = (100, 100)
+TRIANGLE_B = (700, 100)
+TRIANGLE_C = (400, 500)
 
 open_canvas(CANVAS_W, CANVAS_H)
 
@@ -92,15 +92,15 @@ def move_segment(x0, y0, x1, y1):
 
 
 def move_ab():
-    move_segment(A[0], A[1], B[0], B[1])
+    move_segment(TRIANGLE_A[0], TRIANGLE_A[1], TRIANGLE_B[0], TRIANGLE_B[1])
 
 
 def move_bc():
-    move_segment(B[0], B[1], C[0], C[1])
+    move_segment(TRIANGLE_B[0], TRIANGLE_B[1], TRIANGLE_C[0], TRIANGLE_C[1])
 
 
 def move_ca():
-    move_segment(C[0], C[1], A[0], A[1])
+    move_segment(TRIANGLE_C[0], TRIANGLE_C[1], TRIANGLE_A[0], TRIANGLE_A[1])
 
 
 def move_triangle():
