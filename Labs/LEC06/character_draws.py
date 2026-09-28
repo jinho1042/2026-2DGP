@@ -60,7 +60,6 @@ def draw_bottom():
     
 
 def move_rectangle():
-    print('rectangle')
     draw_top()
     draw_right()
     draw_bottom()
@@ -109,7 +108,6 @@ def move_ca():
 
 
 def move_triangle():
-    print('triangle')
     move_ab()
     move_bc()
     move_ca()
