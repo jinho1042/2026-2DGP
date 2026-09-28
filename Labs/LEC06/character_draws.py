@@ -86,9 +86,14 @@ def move_ab():
         delay(0.01)
 
 
+def move_bc():
+    print('bc')
+
+
 def move_triangle():
     print('triangle')
     move_ab()
+    move_bc()
 
 
 while True:
