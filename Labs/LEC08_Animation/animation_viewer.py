@@ -105,6 +105,7 @@ class Player:
 
     def __init__(self, animations):
         self.anims = animations
+        self.frozen = False      # 사용자가 일시정지했는지
         self.reset()
 
     def reset(self):
@@ -114,12 +115,27 @@ class Player:
         self.timer = 0.0           # 누적 시간
         self.pausing = False       # 정지 구간인지 여부
 
+    def toggle_freeze(self):
+        """SPACE: 재생/일시정지 전환."""
+        self.frozen = not self.frozen
+
+    def skip_to_next(self):
+        """N: 다음 애니메이션으로 건너뛴다."""
+        self.pausing = False
+        self.repeat = 0
+        self.frame = 0
+        self.timer = 0.0
+        self.anim_index = (self.anim_index + 1) % len(self.anims)
+
     @property
     def current(self):
         return self.anims[self.anim_index]
 
     def update(self, dt):
         """시간을(dt 초만큼) 진행시킨다."""
+        if self.frozen:
+            return
+
         self.timer += dt
 
         if self.pausing:
@@ -146,9 +162,12 @@ class Player:
 
     def status_text(self):
         """하단 상태 표시용 문자열."""
+        if self.frozen:
+            return "PAUSED (SPACE)"
         if self.pausing:
             return "PAUSE"
-        return f"{self.repeat + 1}/{REPEAT_COUNT}  frame {self.frame + 1}/{self.current.count()}"
+        return (f"{self.repeat + 1}/{REPEAT_COUNT}  "
+                f"frame {self.frame + 1}/{self.current.count()}")
 
 
 def draw_background():
@@ -182,13 +201,21 @@ def draw_character(anim, frame_index):
     )
 
 
-def handle_events():
-    """종료 이벤트를 처리한다. 종료 시 False 반환."""
+def handle_events(player):
+    """키보드/창 이벤트를 처리한다. 종료 요청 시 False 반환."""
     for e in pico2d.get_events():
         if e.type == pico2d.SDL_QUIT:
             return False
-        if e.type == pico2d.SDL_KEYDOWN and e.key == pico2d.SDLK_ESCAPE:
+        if e.type != pico2d.SDL_KEYDOWN:
+            continue
+        if e.key == pico2d.SDLK_ESCAPE:
             return False
+        if e.key == pico2d.SDLK_SPACE:
+            player.toggle_freeze()
+        elif e.key == pico2d.SDLK_n:
+            player.skip_to_next()
+        elif e.key == pico2d.SDLK_r:
+            player.reset()
     return True
 
 
@@ -211,7 +238,7 @@ def main():
     last_time = pico2d.get_time()
 
     while running:
-        if not handle_events():
+        if not handle_events(player):
             break
 
         now = pico2d.get_time()
