@@ -45,6 +45,7 @@ FOOT_Y = CANVAS_H / 2 - CHAR_HEIGHT / 2
 # 색상
 BG = (26, 28, 36, 255)
 GROUND = (48, 52, 68, 255)
+GROUND_LINE = (96, 106, 134, 255)
 LABEL = (235, 238, 245, 255)
 SUB_LABEL = (150, 158, 178, 255)
 
@@ -202,9 +203,14 @@ class Player:
 
 
 def draw_background():
-    """배경과 바닥선을 그린다."""
+    """배경과 바닥을 그린다.
+
+    (캐릭터 그림자는 스프라이트 시트에 이미 포함되어 있다.)
+    """
     pico2d.draw_rectangle(0, 0, CANVAS_W, CANVAS_H, *BG, True)
     pico2d.draw_rectangle(0, 0, CANVAS_W, FOOT_Y, *GROUND, True)
+    # 바닥 위 경계선
+    pico2d.draw_rectangle(0, FOOT_Y - 2, CANVAS_W, FOOT_Y, *GROUND_LINE, True)
 
 
 def draw_character(anim, frame_index, facing_right=True, scale=None):
