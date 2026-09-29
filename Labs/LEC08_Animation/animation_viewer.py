@@ -49,7 +49,8 @@ GROUND_LINE = (96, 106, 134, 255)
 LABEL = (235, 238, 245, 255)
 SUB_LABEL = (150, 158, 178, 255)
 
-KEY_HELP = "SPACE pause | N next | R restart | LEFT/RIGHT flip | UP/DOWN size | 0 reset | ESC quit"
+KEY_HELP = ("SPACE pause | . , step frame | N next | R restart | "
+            "LEFT/RIGHT flip | UP/DOWN size | 0 reset | ESC quit")
 
 # 라벨용 폰트 (없는 경우 None -> 라벨만 생략)
 FONT_CANDIDATES = [
@@ -138,6 +139,8 @@ class Player:
     def __init__(self, animations):
         self.anims = animations
         self.frozen = False      # 사용자가 일시정지했는지
+        self.step_mode = False   # 한 프레임씩 이동 모드
+        self.cycles = 0          # 전체 사이클 완료 횟수
         self.reset()
 
     def reset(self):
@@ -146,10 +149,24 @@ class Player:
         self.frame = 0             # 현재 애니메이션 내 프레임 인덱스
         self.timer = 0.0           # 누적 시간
         self.pausing = False       # 정지 구간인지 여부
+        self.cycles = 0
 
     def toggle_freeze(self):
         """SPACE: 재생/일시정지 전환."""
         self.frozen = not self.frozen
+
+    def step_frame(self, delta):
+        """'.' / ',' : 한 프레임씩 앞으로/뒤로 이동."""
+        self.frozen = True
+        self.pausing = False
+        self.timer = 0.0
+        self.frame += delta
+        while self.frame >= self.current.count():
+            self.frame -= self.current.count()
+            self.repeat = (self.repeat + 1) % REPEAT_COUNT
+        while self.frame < 0:
+            self.frame += self.current.count()
+            self.repeat = (self.repeat - 1) % REPEAT_COUNT
 
     def skip_to_next(self):
         """N: 다음 애니메이션으로 건너뛴다."""
@@ -176,7 +193,7 @@ class Player:
                 self.pausing = False
                 self.repeat = 0
                 self.frame = 0
-                self.anim_index = (self.anim_index + 1) % len(self.anims)
+                self.next_animation()
             return
 
         # 프레임 수가 달라도 동일 속도로 재생되도록 고정 스텝 사용
@@ -192,13 +209,22 @@ class Player:
                     self.timer = 0.0
                     break
 
+    def next_animation(self):
+        """정지가 끝나고 다음 애니메이션으로 넘어갈 때 호출."""
+        self.anim_index = (self.anim_index + 1) % len(self.anims)
+        if self.anim_index == 0:
+            self.cycles += 1
+
     def status_text(self):
         """하단 상태 표시용 문자열."""
         if self.frozen:
-            return "PAUSED (SPACE)"
-        if self.pausing:
-            return "PAUSE"
-        return (f"{self.repeat + 1}/{REPEAT_COUNT}  "
+            mode = "PAUSED" if not self.step_mode else "STEP"
+        elif self.pausing:
+            mode = "PAUSE"
+        else:
+            mode = "PLAY"
+        return (f"{mode}  cycle {self.cycles}  "
+                f"{self.repeat + 1}/{REPEAT_COUNT}  "
                 f"frame {self.frame + 1}/{self.current.count()}")
 
 
@@ -257,6 +283,12 @@ def handle_events(player, state):
             return False
         elif e.key == pico2d.SDLK_SPACE:
             player.toggle_freeze()
+        elif e.key == pico2d.SDLK_PERIOD:
+            player.step_mode = True
+            player.step_frame(1)
+        elif e.key == pico2d.SDLK_COMMA:
+            player.step_mode = True
+            player.step_frame(-1)
         elif e.key == pico2d.SDLK_n:
             player.skip_to_next()
         elif e.key == pico2d.SDLK_r:
