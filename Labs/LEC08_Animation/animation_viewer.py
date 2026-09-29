@@ -48,6 +48,8 @@ GROUND = (48, 52, 68, 255)
 LABEL = (235, 238, 245, 255)
 SUB_LABEL = (150, 158, 178, 255)
 
+KEY_HELP = "SPACE pause | N next | R restart | LEFT/RIGHT flip | UP/DOWN size | 0 reset | ESC quit"
+
 # 라벨용 폰트 (없는 경우 None -> 라벨만 생략)
 FONT_CANDIDATES = [
     r"C:\Windows\Fonts\malgun.ttf",
@@ -278,6 +280,7 @@ def main():
         if title_font:
             title_font.draw(CANVAS_W / 2, CANVAS_H - 60, anim.name.upper(), LABEL[:3])
             info_font.draw(CANVAS_W / 2, CANVAS_H - 26, player.status_text(), SUB_LABEL[:3])
+            info_font.draw(CANVAS_W / 2, 30, KEY_HELP, SUB_LABEL[:3])
 
         pico2d.update_canvas()
 
