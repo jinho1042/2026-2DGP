@@ -153,40 +153,40 @@
           "left": 8,
           "top": 8,
           "width": 86,
-          "height": 254,
+          "height": 246,
           "anchor_x": 46.0,
-          "anchor_y": 246.0
+          "anchor_y": 238.0
         },
         {
           "index": 1,
           "left": 102,
           "top": 8,
-          "width": 84,
-          "height": 286,
+          "width": 82,
+          "height": 262,
           "anchor_x": 40.0,
-          "anchor_y": 278.0
+          "anchor_y": 254.0
         },
         {
           "index": 2,
-          "left": 194,
+          "left": 192,
           "top": 8,
           "width": 87,
-          "height": 182,
+          "height": 198,
           "anchor_x": 47.0,
-          "anchor_y": 142.0
+          "anchor_y": 158.0
         },
         {
           "index": 3,
-          "left": 289,
+          "left": 287,
           "top": 8,
           "width": 82,
           "height": 221,
           "anchor_x": 40.0,
-          "anchor_y": 186.0
+          "anchor_y": 194.0
         },
         {
           "index": 4,
-          "left": 379,
+          "left": 377,
           "top": 8,
           "width": 80,
           "height": 222,

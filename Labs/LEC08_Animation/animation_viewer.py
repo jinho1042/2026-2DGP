@@ -29,10 +29,10 @@ REPEAT_COUNT = 5          # 각 애니메이션 반복 횟수
 PAUSE_SECONDS = 1.0       # 반복 후 정지 시간
 FRAME_DURATION = 1.0 / 30 # 프레임 표시 시간 (고정 스텝)
 
-# 캐릭터 표시 크기 (화면 세로의 약 2/3 -> 절반 이상 조건 충족)
-CHAR_HEIGHT = 400
-CHAR_WIDTH_AT_UNITS = 208.0  # 시트에서 캐릭터 1unit 이 차지하는 픽셀 수
-SCALE = CHAR_HEIGHT / CHAR_WIDTH_AT_UNITS
+# 캐릭터 표시 크기 (화면 세로의 60% -> 절반 이상 조건 충족)
+CHAR_HEIGHT = 360
+CHAR_SHEET_UNITS = 208.0    # 시트에서 캐릭터 1unit 이 차지하는 픽셀 수
+SCALE = CHAR_HEIGHT / CHAR_SHEET_UNITS
 
 # 캐릭터 발밑을 놓을 화면 좌표 (캐릭터가 화면 중앙에 오도록 계산)
 FOOT_X = CANVAS_W / 2
