@@ -76,10 +76,11 @@ class Animation:
         self.image = pico2d.load_image(os.path.join(BASE_DIR, data["image"]))
         self.fps = data["fps"]
         self.frames = data["frames"]
+        self.frame_count = len(self.frames)
         self.sheet_h = self.image.h
 
     def count(self):
-        return len(self.frames)
+        return self.frame_count
 
     def frame_rect(self, i):
         """프레임 i 의 (left, bottom, width, height) 를 반환.
@@ -231,7 +232,7 @@ class Player:
     def anim_info_text(self):
         """현재 애니메이션의 시트 정보 (보너스 항목 확인용)."""
         a = self.current
-        sizes = {(f.width, f.height) for f in a.frames}
+        sizes = {(f["width"], f["height"]) for f in a.frames}
         return (f"{a.name}: {a.frame_count} frames  "
                 f"{len(sizes)} distinct sizes")
 
@@ -314,9 +315,20 @@ def handle_events(player, state):
     return True
 
 
+def set_window_title(title):
+    """창 제목을 설정한다. 실패해도 프로그램은 계속 동작한다."""
+    try:
+        # 이 pico2d 빌드에서는 창 핸들이 pico2d.pico2d.window 에 있고,
+        # SDL_SetWindowTitle 은 바이트 문자열을 받는다.
+        import pico2d.pico2d as _p2
+        pico2d.SDL_SetWindowTitle(_p2.window, title.encode("utf-8"))
+    except Exception as exc:
+        print("window title skipped:", exc)
+
+
 def main():
     pico2d.open_canvas(CANVAS_W, CANVAS_H)
-    pico2d.SDL_SetWindowTitle("LEC08 Animation Viewer")
+    set_window_title("LEC08 Animation Viewer")
     animations = load_animations()
     player = Player(animations)
 
