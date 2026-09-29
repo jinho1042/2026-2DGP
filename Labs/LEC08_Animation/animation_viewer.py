@@ -245,6 +245,7 @@ def handle_events(player, state):
 
 def main():
     pico2d.open_canvas(CANVAS_W, CANVAS_H)
+    pico2d.SDL_SetWindowTitle("LEC08 Animation Viewer")
     animations = load_animations()
     player = Player(animations)
 
