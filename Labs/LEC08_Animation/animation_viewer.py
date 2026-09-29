@@ -96,10 +96,35 @@ class Animation:
 
 
 def load_animations():
-    """메타데이터를 읽어 Animation 리스트를 만든다."""
+    """메타데이터를 읽어 Animation 리스트를 만든다.
+
+    시트가 아직 생성되지 않았다면 안내 메시지와 함께 종료한다.
+    """
+    if not os.path.exists(META_PATH):
+        print("=" * 58)
+        print("스프라이트 시트를 찾을 수 없습니다: sheet_meta.json")
+        print("먼저 아래 명령을 실행하세요:")
+        print("    python make_sprite_sheet.py")
+        print("=" * 58)
+        raise SystemExit(1)
+
     with open(META_PATH, "r", encoding="utf-8") as f:
         data = json.load(f)
-    return [Animation(a) for a in data["animations"]]
+
+    anims = data.get("animations", [])
+    if not anims:
+        print("sheet_meta.json 에 애니메이션이 없습니다.")
+        raise SystemExit(1)
+
+    animations = []
+    for a in anims:
+        img_path = os.path.join(BASE_DIR, a["image"])
+        if not os.path.exists(img_path):
+            print(f"시트 이미지 없음: {a['image']} "
+                  f"(python make_sprite_sheet.py 실행 필요)")
+            raise SystemExit(1)
+        animations.append(Animation(a))
+    return animations
 
 
 class Player:
