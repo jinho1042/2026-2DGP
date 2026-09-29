@@ -1,0 +1,270 @@
+{
+  "animations": [
+    {
+      "name": "walk",
+      "image": "sheet_walk.png",
+      "fps": 8,
+      "frame_count": 6,
+      "frames": [
+        {
+          "index": 0,
+          "left": 8,
+          "top": 8,
+          "width": 87,
+          "height": 222,
+          "anchor_x": 40.0,
+          "anchor_y": 214.0
+        },
+        {
+          "index": 1,
+          "left": 103,
+          "top": 8,
+          "width": 80,
+          "height": 221,
+          "anchor_x": 40.0,
+          "anchor_y": 210.0
+        },
+        {
+          "index": 2,
+          "left": 191,
+          "top": 8,
+          "width": 81,
+          "height": 222,
+          "anchor_x": 41.0,
+          "anchor_y": 214.0
+        },
+        {
+          "index": 3,
+          "left": 280,
+          "top": 8,
+          "width": 80,
+          "height": 221,
+          "anchor_x": 40.0,
+          "anchor_y": 210.0
+        },
+        {
+          "index": 4,
+          "left": 368,
+          "top": 8,
+          "width": 87,
+          "height": 222,
+          "anchor_x": 40.0,
+          "anchor_y": 214.0
+        },
+        {
+          "index": 5,
+          "left": 463,
+          "top": 8,
+          "width": 80,
+          "height": 221,
+          "anchor_x": 40.0,
+          "anchor_y": 210.0
+        }
+      ]
+    },
+    {
+      "name": "run",
+      "image": "sheet_run.png",
+      "fps": 14,
+      "frame_count": 8,
+      "frames": [
+        {
+          "index": 0,
+          "left": 8,
+          "top": 8,
+          "width": 139,
+          "height": 223,
+          "anchor_x": 46.0,
+          "anchor_y": 214.0
+        },
+        {
+          "index": 1,
+          "left": 155,
+          "top": 8,
+          "width": 122,
+          "height": 223,
+          "anchor_x": 43.0,
+          "anchor_y": 198.0
+        },
+        {
+          "index": 2,
+          "left": 285,
+          "top": 8,
+          "width": 94,
+          "height": 223,
+          "anchor_x": 40.0,
+          "anchor_y": 206.0
+        },
+        {
+          "index": 3,
+          "left": 387,
+          "top": 8,
+          "width": 82,
+          "height": 222,
+          "anchor_x": 40.0,
+          "anchor_y": 194.0
+        },
+        {
+          "index": 4,
+          "left": 477,
+          "top": 8,
+          "width": 83,
+          "height": 221,
+          "anchor_x": 43.0,
+          "anchor_y": 204.0
+        },
+        {
+          "index": 5,
+          "left": 568,
+          "top": 8,
+          "width": 84,
+          "height": 222,
+          "anchor_x": 41.5,
+          "anchor_y": 214.0
+        },
+        {
+          "index": 6,
+          "left": 660,
+          "top": 8,
+          "width": 92,
+          "height": 223,
+          "anchor_x": 40.0,
+          "anchor_y": 198.0
+        },
+        {
+          "index": 7,
+          "left": 760,
+          "top": 8,
+          "width": 105,
+          "height": 223,
+          "anchor_x": 43.0,
+          "anchor_y": 206.0
+        }
+      ]
+    },
+    {
+      "name": "jump",
+      "image": "sheet_jump.png",
+      "fps": 6,
+      "frame_count": 5,
+      "frames": [
+        {
+          "index": 0,
+          "left": 8,
+          "top": 8,
+          "width": 86,
+          "height": 254,
+          "anchor_x": 46.0,
+          "anchor_y": 246.0
+        },
+        {
+          "index": 1,
+          "left": 102,
+          "top": 8,
+          "width": 84,
+          "height": 286,
+          "anchor_x": 40.0,
+          "anchor_y": 278.0
+        },
+        {
+          "index": 2,
+          "left": 194,
+          "top": 8,
+          "width": 87,
+          "height": 182,
+          "anchor_x": 47.0,
+          "anchor_y": 142.0
+        },
+        {
+          "index": 3,
+          "left": 289,
+          "top": 8,
+          "width": 82,
+          "height": 221,
+          "anchor_x": 40.0,
+          "anchor_y": 186.0
+        },
+        {
+          "index": 4,
+          "left": 379,
+          "top": 8,
+          "width": 80,
+          "height": 222,
+          "anchor_x": 40.0,
+          "anchor_y": 214.0
+        }
+      ]
+    },
+    {
+      "name": "attack",
+      "image": "sheet_attack.png",
+      "fps": 11,
+      "frame_count": 7,
+      "frames": [
+        {
+          "index": 0,
+          "left": 8,
+          "top": 8,
+          "width": 122,
+          "height": 222,
+          "anchor_x": 82.0,
+          "anchor_y": 214.0
+        },
+        {
+          "index": 1,
+          "left": 138,
+          "top": 8,
+          "width": 140,
+          "height": 221,
+          "anchor_x": 100.0,
+          "anchor_y": 206.0
+        },
+        {
+          "index": 2,
+          "left": 286,
+          "top": 8,
+          "width": 89,
+          "height": 222,
+          "anchor_x": 43.0,
+          "anchor_y": 200.0
+        },
+        {
+          "index": 3,
+          "left": 383,
+          "top": 8,
+          "width": 134,
+          "height": 223,
+          "anchor_x": 40.0,
+          "anchor_y": 204.0
+        },
+        {
+          "index": 4,
+          "left": 525,
+          "top": 8,
+          "width": 202,
+          "height": 223,
+          "anchor_x": 43.5,
+          "anchor_y": 214.0
+        },
+        {
+          "index": 5,
+          "left": 735,
+          "top": 8,
+          "width": 206,
+          "height": 230,
+          "anchor_x": 40.0,
+          "anchor_y": 222.0
+        },
+        {
+          "index": 6,
+          "left": 949,
+          "top": 8,
+          "width": 160,
+          "height": 222,
+          "anchor_x": 40.0,
+          "anchor_y": 214.0
+        }
+      ]
+    }
+  ]
+}
