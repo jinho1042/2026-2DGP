@@ -218,14 +218,22 @@ class Player:
     def status_text(self):
         """하단 상태 표시용 문자열."""
         if self.frozen:
-            mode = "PAUSED" if not self.step_mode else "STEP"
+            mode = "STEP" if self.step_mode else "PAUSED"
         elif self.pausing:
             mode = "PAUSE"
         else:
             mode = "PLAY"
         return (f"{mode}  cycle {self.cycles}  "
                 f"{self.repeat + 1}/{REPEAT_COUNT}  "
-                f"frame {self.frame + 1}/{self.current.count()}")
+                f"frame {self.frame + 1}/{self.current.count()}"
+                f"  (sheet {self.current.fps}fps)")
+
+    def anim_info_text(self):
+        """현재 애니메이션의 시트 정보 (보너스 항목 확인용)."""
+        a = self.current
+        sizes = {(f.width, f.height) for f in a.frames}
+        return (f"{a.name}: {a.frame_count} frames  "
+                f"{len(sizes)} distinct sizes")
 
 
 def draw_background():
@@ -343,7 +351,8 @@ def main():
         anim = player.current
         if title_font:
             title_font.draw(CANVAS_W / 2, CANVAS_H - 60, anim.name.upper(), LABEL[:3])
-            info_font.draw(CANVAS_W / 2, CANVAS_H - 26, player.status_text(), SUB_LABEL[:3])
+            info_font.draw(CANVAS_W / 2, CANVAS_H - 40, player.status_text(), SUB_LABEL[:3])
+            info_font.draw(CANVAS_W / 2, CANVAS_H - 20, player.anim_info_text(), SUB_LABEL[:3])
             info_font.draw(CANVAS_W / 2, 30, KEY_HELP, SUB_LABEL[:3])
 
         pico2d.update_canvas()
