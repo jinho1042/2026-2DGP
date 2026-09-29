@@ -1,0 +1,30 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Animation Viewer (pico2d)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/animation_viewer.py",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+        {
+            "name": "Make Sprite Sheets",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/make_sprite_sheet.py",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Verify Sheets",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/verify_sheets.py",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        }
+    ]
+}
