@@ -32,7 +32,11 @@ FRAME_DURATION = 1.0 / 30 # 프레임 표시 시간 (고정 스텝)
 # 캐릭터 표시 크기 (화면 세로의 60% -> 절반 이상 조건 충족)
 CHAR_HEIGHT = 360
 CHAR_SHEET_UNITS = 208.0    # 시트에서 캐릭터 1unit 이 차지하는 픽셀 수
-SCALE = CHAR_HEIGHT / CHAR_SHEET_UNITS
+BASE_SCALE = CHAR_HEIGHT / CHAR_SHEET_UNITS
+SCALE_STEP = 0.2             # UP/DOWN 키 조정 단위
+MIN_SCALE = 0.5
+MAX_SCALE = 4.0
+SCALE = BASE_SCALE           # 현재 배율 (실행 중 변경 가능)
 
 # 캐릭터 발밑을 놓을 화면 좌표 (캐릭터가 화면 중앙에 오도록 계산)
 FOOT_X = CANVAS_W / 2
@@ -176,46 +180,64 @@ def draw_background():
     pico2d.draw_rectangle(0, 0, CANVAS_W, FOOT_Y, *GROUND, True)
 
 
-def draw_character(anim, frame_index):
+def draw_character(anim, frame_index, facing_right=True, scale=None):
     """발밑 앵커가 (FOOT_X, FOOT_Y) 에 오도록 캐릭터를 확대해 그린다.
 
     프레임마다 원본 크기가 다르므로, 배율을 고정한 채 앵커를 기준으로
     화면 좌표를 계산해야 캐릭터 크기가 프레임마다 달라지지 않는다.
+
+    facing_right=False 이면 좌우 반전('h')해 반대 방향을 보게 한다.
     """
+    scale = SCALE if scale is None else scale
     left, bottom, w, h = anim.frame_rect(frame_index)
     ax, ay = anim.anchor(frame_index)
 
-    dw = w * SCALE
-    dh = h * SCALE
+    dw = w * scale
+    dh = h * scale
 
     # clip_composite_draw 의 (x, y) 는 목적지 사각형의 중심.
     # 발밑(앵커)이 (FOOT_X, FOOT_Y) 에 정확히 오도록 중심을 역산한다.
-    cx = FOOT_X + dw / 2 - ax * SCALE
-    cy = FOOT_Y - dh / 2 + ay * SCALE
+    cx = FOOT_X + dw / 2 - ax * scale
+    cy = FOOT_Y - dh / 2 + ay * scale
 
     anim.image.clip_composite_draw(
         left, bottom, w, h,
-        0, '',
+        0, '' if facing_right else 'h',
         cx, cy,
         dw, dh,
     )
 
 
-def handle_events(player):
-    """키보드/창 이벤트를 처리한다. 종료 요청 시 False 반환."""
+def handle_events(player, state):
+    """키보드/창 이벤트를 처리한다. 종료 요청 시 False 반환.
+
+    state 는 뷰어 설정(방향, 크기 배율, 디버그 표시)을 담은 dict 이며
+    함수 안에서 직접 수정된다.
+    """
     for e in pico2d.get_events():
         if e.type == pico2d.SDL_QUIT:
             return False
         if e.type != pico2d.SDL_KEYDOWN:
             continue
+
         if e.key == pico2d.SDLK_ESCAPE:
             return False
-        if e.key == pico2d.SDLK_SPACE:
+        elif e.key == pico2d.SDLK_SPACE:
             player.toggle_freeze()
         elif e.key == pico2d.SDLK_n:
             player.skip_to_next()
         elif e.key == pico2d.SDLK_r:
             player.reset()
+        elif e.key == pico2d.SDLK_RIGHT:
+            state["facing_right"] = True
+        elif e.key == pico2d.SDLK_LEFT:
+            state["facing_right"] = False
+        elif e.key == pico2d.SDLK_UP:
+            state["scale"] = min(state["scale"] + SCALE_STEP, MAX_SCALE)
+        elif e.key == pico2d.SDLK_DOWN:
+            state["scale"] = max(state["scale"] - SCALE_STEP, MIN_SCALE)
+        elif e.key == pico2d.SDLK_0:
+            state["scale"] = BASE_SCALE
     return True
 
 
@@ -236,9 +258,10 @@ def main():
 
     running = True
     last_time = pico2d.get_time()
+    state = {"facing_right": True, "scale": BASE_SCALE}
 
     while running:
-        if not handle_events(player):
+        if not handle_events(player, state):
             break
 
         now = pico2d.get_time()
@@ -247,7 +270,8 @@ def main():
         player.update(dt)
 
         draw_background()
-        draw_character(player.current, player.frame)
+        draw_character(player.current, player.frame,
+                       state["facing_right"], state["scale"])
 
         # 현재 애니메이션 이름 / 진행 상태 표시
         anim = player.current
