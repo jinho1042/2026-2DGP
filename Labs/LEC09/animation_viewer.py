@@ -133,6 +133,67 @@ def draw_frame(animation, position, flip=False):
     )
 
 
+class Player:
+    """애니메이션 재생 상태를 관리한다.
+
+    진행 규칙 (PRD 요구사항):
+        각 애니메이션을 5회 반복한 뒤 1회 더 재생하고 다음으로 넘어간다.
+        마지막 애니메이션까지 마치면 처음부터 무한 반복한다.
+    """
+
+    def __init__(self, animations):
+        self.animations = animations
+        self.cycles = 0
+        self.reset()
+
+    def reset(self):
+        self.anim_index = 0
+        self.frame = 0
+        self.repeat = 0
+        self.timer = 0.0
+
+    @property
+    def current(self):
+        return self.animations[self.anim_index]
+
+    def update(self, dt):
+        """시간을 dt 초만큼 진행시킨다."""
+        self.timer += dt
+
+        while self.timer >= FRAME_DURATION:
+            self.timer -= FRAME_DURATION
+            self.frame += 1
+
+            if self.frame >= self.current.count:
+                self.frame = 0
+                self.repeat += 1
+
+                # 5회 반복을 마쳤으면 1회 더 재생한 뒤 다음 애니메이션으로.
+                if self.repeat >= REPEAT_COUNT + 1:
+                    self.repeat = 0
+                    self._advance()
+
+    def _advance(self):
+        """다음 애니메이션으로 넘어간다. 끝이면 처음부터 반복."""
+        self.anim_index = (self.anim_index + 1) % len(self.animations)
+        if self.anim_index == 0:
+            self.cycles += 1
+
+    def skip_next(self):
+        """바로 다음 애니메이션으로 건너뛴다."""
+        self.frame = 0
+        self.repeat = 0
+        self.timer = 0.0
+        self._advance()
+
+    def status_text(self):
+        """상태 표시 문자열."""
+        return (f"{self.current.name}   "
+                f"{self.repeat + 1}/{REPEAT_COUNT + 1} 회   "
+                f"frame {self.frame + 1}/{self.current.count}   "
+                f"cycle {self.cycles}")
+
+
 def main():
     meta = load_meta()
     sheet = pico2d.load_image(os.path.join(BASE_DIR, meta["image"]))
@@ -143,8 +204,11 @@ def main():
     set_window_title("LEC09 Animation Viewer")
 
     animations = load_animations(meta, sheet)
+    player = Player(animations)
+    flip = False
 
     running = True
+    last_time = pico2d.get_time()
     while running:
         for event in pico2d.get_events():
             if event.type == pico2d.SDL_QUIT:
@@ -152,9 +216,19 @@ def main():
             elif event.type == pico2d.SDL_KEYDOWN:
                 if event.key == pico2d.SDLK_ESCAPE:
                     running = False
+                elif event.key == pico2d.SDLK_n:
+                    player.skip_next()
+                elif event.key == pico2d.SDLK_LEFT:
+                    flip = True
+                elif event.key == pico2d.SDLK_RIGHT:
+                    flip = False
+
+        now = pico2d.get_time()
+        player.update(now - last_time)
+        last_time = now
 
         pico2d.clear_canvas()
-        draw_frame(animations[0], 0)
+        draw_frame(player.current, player.frame, flip)
         pico2d.update_canvas()
 
     pico2d.close_canvas()
