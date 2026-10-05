@@ -105,3 +105,76 @@ def decompress_idat(data, expected_size):
             f"해제된 크기가 기대와 다릅니다: {len(raw)} != {expected_size}"
         )
     return raw
+
+
+def _paeth(a, b, c):
+    """Paeth 예측기: 왼쪽/위/왼쪽위 픽셀로부터 가장 가까운 값을 추정."""
+    p = a + b - c
+    pa, pb, pc = abs(p - a), abs(p - b), abs(p - c)
+    if pa <= pb and pa <= pc:
+        return a
+    if pb <= pc:
+        return b
+    return c
+
+
+def unfilter(raw, width, height):
+    """필터가 적용된 스캔라인들을 원본 픽셀열로 되돌린다.
+
+    PNG 는 각 행 맨 앞에 필터 종류(0~4)를 기록하고,
+    나머지는 위/왼쪽 픽셀과의 차이만 저장한다.
+    아래는 규격의 각 필터를 되돌리는 역연산이다.
+
+        0 None      : 원본 그대로
+        1 Sub       : 왼쪽 픽셀을 더함
+        2 Up        : 위쪽 픽셀을 더함
+        3 Average   : (왼쪽 + 위) // 2 를 더함
+        4 Paeth     : 왼쪽/위/왼위 중 추정값을 더함
+    """
+    stride = width * 4          # RGBA = 한 픽셀 4바이트
+    out = bytearray(height * stride)
+    previous = bytearray(stride)
+    position = 0
+
+    for y in range(height):
+        filter_type = raw[position]
+        position += 1
+        line = bytearray(raw[position:position + stride])
+        position += stride
+
+        if filter_type == 0:
+            pass
+        elif filter_type == 1:
+            for i in range(4, stride):
+                line[i] = (line[i] + line[i - 4]) & 0xFF
+        elif filter_type == 2:
+            for i in range(stride):
+                line[i] = (line[i] + previous[i]) & 0xFF
+        elif filter_type == 3:
+            for i in range(stride):
+                left = line[i - 4] if i >= 4 else 0
+                line[i] = (line[i] + ((left + previous[i]) >> 1)) & 0xFF
+        elif filter_type == 4:
+            for i in range(stride):
+                left = line[i - 4] if i >= 4 else 0
+                up = previous[i]
+                up_left = previous[i - 4] if i >= 4 else 0
+                line[i] = (line[i] + _paeth(left, up, up_left)) & 0xFF
+        else:
+            raise PngError(f"알 수 없는 필터 종류: {filter_type}")
+
+        out[y * stride:(y + 1) * stride] = line
+        previous = line
+
+    return out
+
+
+def load_pixels(path):
+    """PNG 파일을 RGBA 픽셀 바이트열로 읽는다."""
+    with open(path, "rb") as handle:
+        data = handle.read()
+
+    header = read_header(data)
+    width, height = header["width"], header["height"]
+    raw = decompress_idat(data, (width * 4 + 1) * height)
+    return width, height, unfilter(raw, width, height)
