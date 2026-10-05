@@ -134,27 +134,85 @@ def draw_background():
                        20, 22, 32, 255)
 
 
+LABEL = (236, 240, 248, 255)
+SUB_LABEL = (146, 156, 180, 255)
+ACCENT = (120, 200, 255, 255)
+
+KEY_HELP = ("SPACE 일시정지 | . , 한 프레임 | N 다음 동작 | R 처음부터 | "
+            "LEFT/RIGHT 방향 전환 | UP/DOWN 크기 | 0 기본 | ESC 종료")
+
+
+def draw_ui(fonts, player, paused, step_mode, scale_ratio):
+    """상단 상태 바와 하단 도움말을 그린다."""
+    title_font, info_font, small_font = fonts
+    if not info_font:
+        return
+
+    # 상단 상태 바
+    pico2d.draw_rectangle(0, CANVAS_H - 104, CANVAS_W, CANVAS_H,
+                          16, 18, 26, 190, True)
+    pico2d.draw_rectangle(0, CANVAS_H - 104, CANVAS_W, CANVAS_H - 102,
+                          *ACCENT, 255, True)
+
+    animation = player.current
+
+    if title_font:
+        order = f"{player.anim_index + 1} / {len(player.animations)}"
+        title_font.draw(CANVAS_W / 2, CANVAS_H - 46, animation.name,
+                        LABEL[:3], align="center")
+        title_font.draw(CANVAS_W - 130, CANVAS_H - 46, order,
+                        SUB_LABEL[:3], align="right")
+
+    mode = "정지" if paused else ("프레임" if step_mode else "재생")
+    info_font.draw(CANVAS_W / 2, CANVAS_H - 74, player.status_text(),
+                   SUB_LABEL[:3], align="center")
+    info_font.draw(40, CANVAS_H - 74, f"모드 {mode}", SUB_LABEL[:3])
+
+    # 반복 진행 표시: 6칸(5회 반복 + 1회 추가)
+    bar_w, bar_h, gap = 26, 8, 8
+    total_w = bar_w * (REPEAT_COUNT + 1) + gap * REPEAT_COUNT
+    bx = CANVAS_W / 2 - total_w / 2
+    for i in range(REPEAT_COUNT + 1):
+        filled = i <= player.repeat
+        color = ACCENT if filled else (52, 58, 76, 255)
+        if i == REPEAT_COUNT and not filled:
+            color = (90, 70, 52, 255)
+        pico2d.draw_rectangle(bx, CANVAS_H - 92, bx + bar_w, CANVAS_H - 84,
+                              *color, 255, True)
+        bx += bar_w + gap
+
+    if small_font:
+        small_font.draw(CANVAS_W / 2, CANVAS_H - 118, KEY_HELP,
+                        SUB_LABEL[:3], align="center")
+        small_font.draw(40, 34,
+                        f"크기 {scale_ratio:.0%}   "
+                        f"프레임 {animation.frame(player.frame)['width']}x"
+                        f"{animation.frame(player.frame)['height']}",
+                        SUB_LABEL[:3])
+
+
 def frame_scale(animation):
     """프레임 원본 높이를 기준으로 화면 배율을 계산한다."""
     tallest = max(frame["height"] for frame in animation.frames)
     return CHAR_HEIGHT / tallest
 
 
-def draw_frame(animation, position, flip=False):
+def draw_frame(animation, position, flip=False, zoom=1.0):
     """현재 프레임을 화면 중앙에 크게 그린다.
 
     clip_composite_draw 의 (cx, cy) 는 목적지 사각형의 중심 좌표다.
-    프레임마다 높이가 다르므로, 프레임 세로 중앙이 항상 같은 높이에
-    오도록 중심을 계산해 캐릭터가上下로 흔들리지 않게 한다.
+    프레임마다 높이가 다르므로, 표시 높이를 일정하게 유지하도록
+    프레임 세로 중앙이 같은 높이에 오게 중심을 계산한다.
+    zoom 은 사용자가 조절하는 추가 배율이다.
     """
     info = animation.frame(position)
-    scale = frame_scale(animation)
+    scale = frame_scale(animation) * zoom
 
     dw = info["width"] * scale
     dh = info["height"] * scale
 
     left, bottom, width, height = animation.clip_rect(position)
-    cy = FOOT_Y - CHAR_HEIGHT / 2 + dh / 2
+    cy = FOOT_Y - CHAR_HEIGHT * zoom / 2 + dh / 2
 
     animation.sheet.clip_composite_draw(
         left, bottom, width, height,
@@ -236,7 +294,18 @@ def main():
 
     animations = load_animations(meta, sheet)
     player = Player(animations)
-    flip = False
+    fonts = (
+        find_font(44),
+        find_font(20),
+        find_font(16),
+    )
+
+    state = {
+        "flip": False,
+        "paused": False,
+        "step_mode": False,
+        "scale": 1.0,
+    }
 
     running = True
     last_time = pico2d.get_time()
@@ -250,9 +319,9 @@ def main():
                 elif event.key == pico2d.SDLK_n:
                     player.skip_next()
                 elif event.key == pico2d.SDLK_LEFT:
-                    flip = True
+                    state["flip"] = True
                 elif event.key == pico2d.SDLK_RIGHT:
-                    flip = False
+                    state["flip"] = False
 
         now = pico2d.get_time()
         player.update(now - last_time)
@@ -260,7 +329,10 @@ def main():
 
         pico2d.clear_canvas()
         draw_background()
-        draw_frame(player.current, player.frame, flip)
+        draw_frame(player.current, player.frame, state["flip"],
+                   state["scale"])
+        draw_ui(fonts, player, state["paused"], state["step_mode"],
+                state["scale"])
         pico2d.update_canvas()
 
     pico2d.close_canvas()
