@@ -109,11 +109,18 @@ GROUND = (44, 48, 64, 255)
 GROUND_LINE = (96, 108, 140, 255)
 
 
+def rect(x1, y1, x2, y2, color, filled=True):
+    """pico2d.draw_rectangle 은 색상을 위치 인자가 아니라 키워드로 받는다."""
+    r, g, b = color[0], color[1], color[2]
+    a = color[3] if len(color) > 3 else 255
+    pico2d.draw_rectangle(x1, y1, x2, y2, r, g, b, a, filled)
+
+
 def draw_background():
     """배경 그라데이션과 바닥을 그린다.
 
     스프라이트 시트에 그림자가 포함되어 있지 않으므로
-    캐릭터 발밑에 타원을 하나 깔아 접지감을 준다.
+    캐릭터 발밑에 타원 하나를 깔아 접지감을 준다.
     """
     band = 8
     top = CANVAS_H // 2 + 100
@@ -123,15 +130,15 @@ def draw_background():
             int(BG_TOP[i] + (BG_BOTTOM[i] - BG_TOP[i]) * ratio)
             for i in range(3)
         )
-        pico2d.draw_rectangle(0, offset, CANVAS_W, offset + band,
-                              *color, 255, True)
+        rect(0, offset, CANVAS_W, offset + band, color)
 
-    pico2d.draw_rectangle(0, 0, CANVAS_W, top, *BG_BOTTOM, 255, True)
-    pico2d.draw_rectangle(0, 0, CANVAS_W, top - 2, *GROUND_LINE, 255, True)
+    rect(0, 0, CANVAS_W, top, BG_BOTTOM)
+    rect(0, top - 2, CANVAS_W, top, GROUND_LINE)
 
-    # 캐릭터 그림자
-    pico2d.draw_ellipse((FOOT_X - 150, top - 14, FOOT_X + 150, top + 14),
-                       20, 22, 32, 255)
+    # 캐릭터 그림자 (pico2d 에 타원이 없어 타원으로 근사한 원 두 개를 겹친다)
+    for dx, dy, radius in ((0, 0, 150), (0, 0, 90)):
+        pico2d.draw_circle(FOOT_X + dx, top - 12 + dy, radius,
+                           20, 22, 32, 110, True)
 
 
 LABEL = (236, 240, 248, 255)
@@ -149,23 +156,21 @@ def draw_ui(fonts, player, state):
         return
 
     # 상단 상태 바
-    pico2d.draw_rectangle(0, CANVAS_H - 104, CANVAS_W, CANVAS_H,
-                          16, 18, 26, 190, True)
-    pico2d.draw_rectangle(0, CANVAS_H - 104, CANVAS_W, CANVAS_H - 102,
-                          *ACCENT, 255, True)
+    rect(0, CANVAS_H - 104, CANVAS_W, CANVAS_H, (16, 18, 26, 190))
+    rect(0, CANVAS_H - 104, CANVAS_W, CANVAS_H - 102, ACCENT)
 
     animation = player.current
 
     if title_font:
         order = f"{player.anim_index + 1} / {len(player.animations)}"
         title_font.draw(CANVAS_W / 2, CANVAS_H - 46, animation.name,
-                        LABEL[:3], align="center")
+                        LABEL[:3])
         title_font.draw(CANVAS_W - 130, CANVAS_H - 46, order,
-                        SUB_LABEL[:3], align="right")
+                        SUB_LABEL[:3])
 
     mode = "정지" if state["paused"] else ("프레임" if state["step_mode"] else "재생")
     info_font.draw(CANVAS_W / 2, CANVAS_H - 74, player.status_text(),
-                   SUB_LABEL[:3], align="center")
+                   SUB_LABEL[:3])
     info_font.draw(40, CANVAS_H - 74,
                    f"모드 {mode}   속도 {state['fps']} fps",
                    SUB_LABEL[:3])
@@ -179,13 +184,12 @@ def draw_ui(fonts, player, state):
         color = ACCENT if filled else (52, 58, 76, 255)
         if i == REPEAT_COUNT and not filled:
             color = (90, 70, 52, 255)
-        pico2d.draw_rectangle(bx, CANVAS_H - 92, bx + bar_w, CANVAS_H - 84,
-                              *color, 255, True)
+        rect(bx, CANVAS_H - 92, bx + bar_w, CANVAS_H - 84, color)
         bx += bar_w + gap
 
     if small_font:
         small_font.draw(CANVAS_W / 2, CANVAS_H - 118, KEY_HELP,
-                        SUB_LABEL[:3], align="center")
+                        SUB_LABEL[:3])
         small_font.draw(40, 34,
                         f"크기 {state['scale']:.0%}   "
                         f"프레임 {animation.frame(player.frame)['width']}x"
@@ -272,8 +276,7 @@ def draw_strip(animation, current_frame):
 
         active = i == current_frame
         box_color = ACCENT if active else (48, 54, 72, 255)
-        pico2d.draw_rectangle(x, bottom - cell, x + cell, bottom,
-                              *box_color, 255, True)
+        rect(x, bottom - cell, x + cell, bottom, box_color)
 
         animation.sheet.clip_composite_draw(
             *animation.clip_rect(i),
@@ -295,17 +298,16 @@ def draw_sheet_overlay(animation, current_frame, alpha=90):
     sh = animation.sheet.h * scale
     x0, y0 = 26, 26
 
-    pico2d.draw_rectangle(x0 - 4, y0 - 4, x0 + sw + 4, y0 + sh + 4,
-                          12, 14, 20, 220, True)
+    rect(x0 - 4, y0 - 4, x0 + sw + 4, y0 + sh + 4, (12, 14, 20, 220))
     animation.sheet.composite_draw(0, "", x0 + sw / 2, y0 + sh / 2, sw, sh)
 
     info = animation.frame(current_frame)
-    pico2d.draw_rectangle(
+    rect(
         x0 + info["left"] * scale,
         y0 + (animation.sheet.h - info["top"] - info["height"]) * scale,
         x0 + (info["left"] + info["width"]) * scale,
         y0 + (animation.sheet.h - info["top"]) * scale,
-        *ACCENT, 255, False,
+        ACCENT, False,
     )
     return x0, y0, sw, sh
 
