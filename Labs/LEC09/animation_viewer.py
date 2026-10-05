@@ -20,6 +20,40 @@ META_PATH = os.path.join(BASE_DIR, "sheet_meta.json")
 
 CANVAS_W, CANVAS_H = 1200, 800
 
+REPEAT_COUNT = 5
+"""각 애니메이션을 반복 재생할 횟수."""
+
+FRAME_DURATION = 1.0 / 12
+"""프레임 하나를 화면에 유지하는 시간(초)."""
+
+
+class Animation:
+    """애니메이션 하나: 시트 이미지 + 프레임 사각형 목록."""
+
+    def __init__(self, data, sheet):
+        self.name = data["name"]
+        self.index = data["index"]
+        self.fps = data["fps"]
+        self.frames = data["frames"]
+        self.count = len(self.frames)
+        self.sheet = sheet
+        self.sheet_h = sheet.h
+
+    def frame(self, position):
+        """프레임 정보를 인덱스 순환으로 돌려준다."""
+        return self.frames[position % self.count]
+
+    def clip_rect(self, position):
+        """pico2d 용 (left, bottom, width, height) 사각형으로 변환한다.
+
+        이 pico2d 빌드의 clip_composite_draw 는 bottom 이
+        '이미지 아랫면으로부터의 거리'를 받는다.
+        메타데이터는 시트 좌표의 top 이므로 변환이 필요하다.
+        """
+        info = self.frame(position)
+        bottom = self.sheet_h - info["top"] - info["height"]
+        return info["left"], bottom, info["width"], info["height"]
+
 
 def find_font(size):
     """표시용 TrueType 폰트를 찾는다. 없으면 None 을 돌려준다."""
@@ -59,6 +93,46 @@ def set_window_title(title):
         print("창 제목 설정 생략:", exc)
 
 
+def load_animations(meta, sheet):
+    """메타데이터로부터 Animation 리스트를 만든다."""
+    return [Animation(data, sheet) for data in meta["animations"]]
+
+
+FOOT_X = CANVAS_W / 2
+FOOT_Y = CANVAS_H / 2
+CHAR_HEIGHT = 320
+"""화면에 표시할 캐릭터의 세로 크기(픽셀)."""
+
+
+def frame_scale(animation):
+    """프레임 원본 높이를 기준으로 화면 배율을 계산한다."""
+    tallest = max(frame["height"] for frame in animation.frames)
+    return CHAR_HEIGHT / tallest
+
+
+def draw_frame(animation, position, flip=False):
+    """현재 프레임을 화면 중앙에 크게 그린다.
+
+    clip_composite_draw 의 (cx, cy) 는 목적지 사각형의 중심 좌표다.
+    프레임마다 높이가 다르므로, 프레임 세로 중앙이 항상 같은 높이에
+    오도록 중심을 계산해 캐릭터가上下로 흔들리지 않게 한다.
+    """
+    info = animation.frame(position)
+    scale = frame_scale(animation)
+
+    dw = info["width"] * scale
+    dh = info["height"] * scale
+
+    left, bottom, width, height = animation.clip_rect(position)
+
+    animation.sheet.clip_composite_draw(
+        left, bottom, width, height,
+        0, "h" if flip else "",
+        FOOT_X, FOOT_Y,
+        dw, dh,
+    )
+
+
 def main():
     meta = load_meta()
     sheet = pico2d.load_image(os.path.join(BASE_DIR, meta["image"]))
@@ -67,6 +141,8 @@ def main():
 
     pico2d.open_canvas(CANVAS_W, CANVAS_H)
     set_window_title("LEC09 Animation Viewer")
+
+    animations = load_animations(meta, sheet)
 
     running = True
     while running:
@@ -78,6 +154,7 @@ def main():
                     running = False
 
         pico2d.clear_canvas()
+        draw_frame(animations[0], 0)
         pico2d.update_canvas()
 
     pico2d.close_canvas()
