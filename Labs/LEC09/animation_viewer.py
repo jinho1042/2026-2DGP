@@ -191,6 +191,53 @@ def draw_ui(fonts, player, paused, step_mode, scale_ratio):
                         SUB_LABEL[:3])
 
 
+ZOOM_STEP = 0.1
+MIN_ZOOM = 0.5
+MAX_ZOOM = 1.6
+
+
+def handle_events(player, state):
+    """키보드 이벤트를 처리한다. 종료 요청 시 False 를 반환한다."""
+    for event in pico2d.get_events():
+        if event.type == pico2d.SDL_QUIT:
+            return False
+        if event.type != pico2d.SDL_KEYDOWN:
+            continue
+
+        key = event.key
+
+        if key == pico2d.SDLK_ESCAPE:
+            return False
+        elif key == pico2d.SDLK_SPACE:
+            state["paused"] = player.toggle_pause()
+            state["step_mode"] = False
+        elif key == pico2d.SDLK_PERIOD:
+            player.step_frame(1)
+            state["paused"] = True
+            state["step_mode"] = True
+        elif key == pico2d.SDLK_COMMA:
+            player.step_frame(-1)
+            state["paused"] = True
+            state["step_mode"] = True
+        elif key == pico2d.SDLK_n:
+            player.skip_next()
+        elif key == pico2d.SDLK_r:
+            player.reset()
+            state["step_mode"] = False
+        elif key == pico2d.SDLK_LEFT:
+            state["flip"] = True
+        elif key == pico2d.SDLK_RIGHT:
+            state["flip"] = False
+        elif key == pico2d.SDLK_UP:
+            state["scale"] = min(state["scale"] + ZOOM_STEP, MAX_ZOOM)
+        elif key == pico2d.SDLK_DOWN:
+            state["scale"] = max(state["scale"] - ZOOM_STEP, MIN_ZOOM)
+        elif key == pico2d.SDLK_0:
+            state["scale"] = 1.0
+
+    return True
+
+
 def frame_scale(animation):
     """프레임 원본 높이를 기준으로 화면 배율을 계산한다."""
     tallest = max(frame["height"] for frame in animation.frames)
@@ -233,6 +280,7 @@ class Player:
     def __init__(self, animations):
         self.animations = animations
         self.cycles = 0
+        self.frozen = False
         self.reset()
 
     def reset(self):
@@ -247,6 +295,9 @@ class Player:
 
     def update(self, dt):
         """시간을 dt 초만큼 진행시킨다."""
+        if self.frozen:
+            return
+
         self.timer += dt
 
         while self.timer >= FRAME_DURATION:
@@ -274,6 +325,28 @@ class Player:
         self.repeat = 0
         self.timer = 0.0
         self._advance()
+
+    def toggle_pause(self):
+        """재생/일시정지를 전환한다. 반환값은 새 상태."""
+        self.frozen = not self.frozen
+        return self.frozen
+
+    def step_frame(self, delta):
+        """한 프레임만 앞으로/뒤로 이동한다."""
+        self.frame += delta
+        if self.frame >= self.current.count:
+            self.frame = 0
+            self.repeat += 1
+            if self.repeat >= REPEAT_COUNT + 1:
+                self.repeat = 0
+                self._advance()
+        elif self.frame < 0:
+            self.frame = self.current.count - 1
+            self.repeat -= 1
+            if self.repeat < 0:
+                self.repeat = REPEAT_COUNT
+                self.anim_index = (self.anim_index - 1) % len(self.animations)
+        self.timer = 0.0
 
     def status_text(self):
         """상태 표시 문자열."""
@@ -310,18 +383,8 @@ def main():
     running = True
     last_time = pico2d.get_time()
     while running:
-        for event in pico2d.get_events():
-            if event.type == pico2d.SDL_QUIT:
-                running = False
-            elif event.type == pico2d.SDL_KEYDOWN:
-                if event.key == pico2d.SDLK_ESCAPE:
-                    running = False
-                elif event.key == pico2d.SDLK_n:
-                    player.skip_next()
-                elif event.key == pico2d.SDLK_LEFT:
-                    state["flip"] = True
-                elif event.key == pico2d.SDLK_RIGHT:
-                    state["flip"] = False
+        if not handle_events(player, state):
+            break
 
         now = pico2d.get_time()
         player.update(now - last_time)
