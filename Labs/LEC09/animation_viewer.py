@@ -103,6 +103,36 @@ FOOT_Y = CANVAS_H / 2
 CHAR_HEIGHT = 320
 """화면에 표시할 캐릭터의 세로 크기(픽셀)."""
 
+BG_TOP = (30, 34, 46, 255)
+BG_BOTTOM = (18, 20, 28, 255)
+GROUND = (44, 48, 64, 255)
+GROUND_LINE = (96, 108, 140, 255)
+
+
+def draw_background():
+    """배경 그라데이션과 바닥을 그린다.
+
+    스프라이트 시트에 그림자가 포함되어 있지 않으므로
+    캐릭터 발밑에 타원을 하나 깔아 접지감을 준다.
+    """
+    band = 8
+    top = CANVAS_H // 2 + 100
+    for offset in range(0, top, band):
+        ratio = offset / max(top - band, 1)
+        color = tuple(
+            int(BG_TOP[i] + (BG_BOTTOM[i] - BG_TOP[i]) * ratio)
+            for i in range(3)
+        )
+        pico2d.draw_rectangle(0, offset, CANVAS_W, offset + band,
+                              *color, 255, True)
+
+    pico2d.draw_rectangle(0, 0, CANVAS_W, top, *BG_BOTTOM, 255, True)
+    pico2d.draw_rectangle(0, 0, CANVAS_W, top - 2, *GROUND_LINE, 255, True)
+
+    # 캐릭터 그림자
+    pico2d.draw_ellipse((FOOT_X - 150, top - 14, FOOT_X + 150, top + 14),
+                       20, 22, 32, 255)
+
 
 def frame_scale(animation):
     """프레임 원본 높이를 기준으로 화면 배율을 계산한다."""
@@ -124,11 +154,12 @@ def draw_frame(animation, position, flip=False):
     dh = info["height"] * scale
 
     left, bottom, width, height = animation.clip_rect(position)
+    cy = FOOT_Y - CHAR_HEIGHT / 2 + dh / 2
 
     animation.sheet.clip_composite_draw(
         left, bottom, width, height,
         0, "h" if flip else "",
-        FOOT_X, FOOT_Y,
+        FOOT_X, cy,
         dw, dh,
     )
 
@@ -228,6 +259,7 @@ def main():
         last_time = now
 
         pico2d.clear_canvas()
+        draw_background()
         draw_frame(player.current, player.frame, flip)
         pico2d.update_canvas()
 
