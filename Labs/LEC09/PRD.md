@@ -21,7 +21,7 @@ pico2d를 사용하여 sonic-sprite.png 스프라이트 시트의 모든 애니�
    - PRE-PRD: "각 동작(애니메이션)을 5번 반복 재생하고 1번 더 재생 후 다음 동작으로 간다"
 3. **루프**: 모든 애니메이션을 한 바퀴 돌면, 처음 애니메이션부터 다시 무한 반복한다.
 4. **가시성**: 창에 애니메이션 프레임이 잘 보이도록 한다.
-5. **구현 방식**: 한 번에 모든 코드를 작성하지 말고, 기능별로 구현하며 커밋한다.
+7. **구현 방식**: 한 번에 모든 코드를 작성하지 말고, 기능별로 구현하며 커밋한다.
 
 ## 아키텍처/구현 가이드 (Design Notes)
 - pico2d 기반 (python)
@@ -44,4 +44,7 @@ pico2d를 사용하여 sonic-sprite.png 스프라이트 시트의 모든 애니�
 - Labs/LEC08_Animation/animation_viewer.py
 - Labs/LEC08_Animation/sheet_meta.json (존재 시 참고)
 - sonic-sprite.png
+
+커밋 이름은 한국어로만 할것
+
 
