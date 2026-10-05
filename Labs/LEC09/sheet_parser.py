@@ -381,3 +381,89 @@ def group_sequences(width, height, mask, min_frames=MIN_SEQUENCE_FRAMES):
             })
 
     return sequences
+
+
+DEFAULT_FPS = 12
+"""프레임 표시 간격의 기본값(초 단위 역수).
+
+원본 시트에 fps 정보가 따로 없으므로 재생 속도를 직접 지정한다."""
+
+
+def build_meta(sheet_path=SHEET_PATH, fps=DEFAULT_FPS):
+    """시트를 분석해 뷰어가 읽을 메타데이터 dict 를 만든다.
+
+    반환 구조:
+        {
+            "image": 시트 파일명,
+            "sheet_width":, "sheet_height":,
+            "animation_count":, "total_frames":,
+            "animations": [
+                {"name", "index", "fps", "frame_count",
+                 "frames": [{"index", "left", "top", "width", "height", "area"}, ...]}
+            ]
+        }
+    """
+    width, height, pixels = load_pixels(sheet_path)
+    mask = alpha_mask(width, height, pixels)
+    sequences = group_sequences(width, height, mask)
+
+    if not sequences:
+        raise PngError("애니메이션 시퀀스를 찾지 못했습니다.")
+
+    animations = []
+    for order, sequence in enumerate(sequences):
+        frames = [
+            {
+                "index": position,
+                "left": box["x0"],
+                "top": box["y0"],
+                "width": box["width"],
+                "height": box["height"],
+                "area": box["area"],
+            }
+            for position, box in enumerate(sequence["frames"])
+        ]
+        animations.append({
+            "name": f"anim_{order + 1:02d}",
+            "index": order,
+            "fps": fps,
+            "frame_count": len(frames),
+            "frames": frames,
+        })
+
+    return {
+        "image": os.path.basename(sheet_path),
+        "sheet_width": width,
+        "sheet_height": height,
+        "animation_count": len(animations),
+        "total_frames": sum(a["frame_count"] for a in animations),
+        "animations": animations,
+    }
+
+
+def save_meta(meta, path=META_PATH):
+    """메타데이터를 UTF-8 JSON 으로 저장한다."""
+    import json
+
+    with open(path, "w", encoding="utf-8") as handle:
+        json.dump(meta, handle, ensure_ascii=False, indent=2)
+        handle.write("\n")
+    return path
+
+
+def main():
+    """命令行에서 메타데이터를 생성한다."""
+    meta = build_meta()
+    path = save_meta(meta)
+
+    print(f"시트      : {meta['image']} "
+          f"({meta['sheet_width']} x {meta['sheet_height']})")
+    print(f"애니메이션: {meta['animation_count']}개")
+    print(f"총 프레임 : {meta['total_frames']}개")
+    for animation in meta["animations"]:
+        print(f"  {animation['name']}  {animation['frame_count']:2d} frames")
+    print(f"\n저장 완료 : {path}")
+
+
+if __name__ == "__main__":
+    main()
