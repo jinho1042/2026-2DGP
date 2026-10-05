@@ -248,3 +248,55 @@ def column_spans(width, height, mask):
         for x in range(width)
     ]
     return occupied_spans(col_empty)
+
+
+def connected_boxes(width, height, mask, region=None):
+    """알파 마스크에서 상하좌우로 이어진 영역(연결 요소)을 찾는다.
+
+    스프라이트 하나가 몸통/다리/머리처럼 여러 조각으로
+    나뉘어 그려질 수 있으므로, 각 조각의 경계 상자가 아니라
+    '같은 프레임에 속하는 조각 묶음'을 얻어야 한다.
+
+    region 이 주어지면 (x0, y0, x1, y1) 범위 안에서만 탐색한다.
+    반환: list of dict(x0, y0, x1, y1, width, height, area)
+    """
+    x_start, y_start, x_end, y_end = region or (0, 0, width - 1, height - 1)
+    visited = set()
+    boxes = []
+    stack = []
+
+    for y in range(y_start, y_end + 1):
+        for x in range(x_start, x_end + 1):
+            if mask[y * width + x] == 0 or (x, y) in visited:
+                continue
+
+            visited.add((x, y))
+            stack.append((x, y))
+            x0 = x1 = x
+            y0 = y1 = y
+            area = 0
+
+            while stack:
+                cx, cy = stack.pop()
+                area += 1
+                if cx < x0: x0 = cx
+                if cx > x1: x1 = cx
+                if cy < y0: y0 = cy
+                if cy > y1: y1 = cy
+
+                for nx, ny in ((cx + 1, cy), (cx - 1, cy), (cx, cy + 1), (cx, cy - 1)):
+                    if not (x_start <= nx <= x_end and y_start <= ny <= y_end):
+                        continue
+                    if mask[ny * width + nx] == 0 or (nx, ny) in visited:
+                        continue
+                    visited.add((nx, ny))
+                    stack.append((nx, ny))
+
+            boxes.append({
+                "x0": x0, "y0": y0, "x1": x1, "y1": y1,
+                "width": x1 - x0 + 1,
+                "height": y1 - y0 + 1,
+                "area": area,
+            })
+
+    return boxes
