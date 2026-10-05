@@ -238,6 +238,40 @@ def handle_events(player, state):
     return True
 
 
+def draw_strip(animation, current_frame):
+    """현재 애니메이션의 전체 프레임을 아래쪽 줄로 보여준다.
+
+    어느 프레임이 몇 번째인지 눈으로 확인할 수 있게 하는 것이 목적이며,
+    지금 재생 중인 프레임은 강조 색으로 표시한다.
+    """
+    count = animation.count
+    cell = 54
+    gap = 8
+    thumb = 40
+    total_w = count * cell + (count - 1) * gap
+    x = CANVAS_W / 2 - total_w / 2
+    bottom = 86
+
+    for i in range(count):
+        info = animation.frame(i)
+        scale = thumb / info["height"]
+        w = info["width"] * scale
+        h = info["height"] * scale
+
+        active = i == current_frame
+        box_color = ACCENT if active else (48, 54, 72, 255)
+        pico2d.draw_rectangle(x, bottom - cell, x + cell, bottom,
+                              *box_color, 255, True)
+
+        animation.sheet.clip_composite_draw(
+            *animation.clip_rect(i),
+            0, "",
+            x + cell / 2, bottom - cell / 2,
+            w, h,
+        )
+        x += cell + gap
+
+
 def frame_scale(animation):
     """프레임 원본 높이를 기준으로 화면 배율을 계산한다."""
     tallest = max(frame["height"] for frame in animation.frames)
@@ -394,6 +428,7 @@ def main():
         draw_background()
         draw_frame(player.current, player.frame, state["flip"],
                    state["scale"])
+        draw_strip(player.current, player.frame)
         draw_ui(fonts, player, state["paused"], state["step_mode"],
                 state["scale"])
         pico2d.update_canvas()
