@@ -178,3 +178,16 @@ def load_pixels(path):
     width, height = header["width"], header["height"]
     raw = decompress_idat(data, (width * 4 + 1) * height)
     return width, height, unfilter(raw, width, height)
+
+
+def alpha_mask(width, height, pixels):
+    """RGBA 픽셀열에서 알파 마스크를 뽑는다.
+
+    스프라이트 시트는 배경이 완전 투명(alpha 0)이라
+    '무엇이 그려져 있는지'는 알파 값만 보면 알 수 있다.
+    마스크는 1차원 bytearray 로, 값이 0 아니면 그림이 있는 칸이다.
+    """
+    mask = bytearray(width * height)
+    for index in range(width * height):
+        mask[index] = 1 if pixels[index * 4 + 3] > 0 else 0
+    return mask
