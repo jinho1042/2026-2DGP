@@ -11,6 +11,7 @@ sonic-sprite.png 에서 애니메이션 시퀀스를 자동으로 찾아낸다.
 
 import os
 import struct
+import zlib
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 SHEET_PATH = os.path.join(BASE_DIR, "sonic-sprite.png")
@@ -71,3 +72,36 @@ def read_header(data):
         }
 
     raise PngError("IHDR 청크가 없습니다.")
+
+
+def collect_idat(data):
+    """IDAT 청크 페이로드를 이어 붙여 압축 스트림을 만든다.
+
+    PNG 규격상 하나의 이미지가 여러 IDAT 청크로 나뉠 수 있으므로
+    순서대로 모두 모아야 한다.
+    """
+    buffer = bytearray()
+    for chunk_type, payload in iter_chunks(data):
+        if chunk_type == b"IDAT":
+            buffer += payload
+    if not buffer:
+        raise PngError("IDAT 청크가 없습니다.")
+    return bytes(buffer)
+
+
+def decompress_idat(data, expected_size):
+    """IDAT 스트림을 zlib 으로 풀어 스캔라인 바이트열을 얻는다.
+
+    expected_size 는 (필터바이트 1 + width * 4) * height 이며,
+    실제로 나온 길이와 비교해 잘린 파일을 조기에 감지한다.
+    """
+    try:
+        raw = zlib.decompress(collect_idat(data))
+    except zlib.error as exc:
+        raise PngError(f"zlib 해제 실패: {exc}") from exc
+
+    if len(raw) != expected_size:
+        raise PngError(
+            f"해제된 크기가 기대와 다릅니다: {len(raw)} != {expected_size}"
+        )
+    return raw
