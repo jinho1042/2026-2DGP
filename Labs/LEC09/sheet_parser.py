@@ -191,3 +191,60 @@ def alpha_mask(width, height, pixels):
     for index in range(width * height):
         mask[index] = 1 if pixels[index * 4 + 3] > 0 else 0
     return mask
+
+
+def empty_runs(flags):
+    """flags(True == 빈 칸)에서 연속된 빈 구간을 뽑아낸다.
+
+    빈틈이 연속되는 곳이 곧 스프라이트 사이의 경계이므로,
+    '빈 구간'이 아니라 '그림이 있는 연속 구간'을 프레임 후보로 쓴다.
+    여기서는 상태 배열을 만들기 위한 기반 함수로만 사용한다.
+    """
+    spans = []
+    start = None
+    for index, is_empty in enumerate(flags):
+        if is_empty and start is None:
+            start = index
+        elif not is_empty and start is not None:
+            spans.append((start, index - 1))
+            start = None
+    if start is not None:
+        spans.append((start, len(flags) - 1))
+    return spans
+
+
+def occupied_spans(flags):
+    """flags 에서 그림이 있는 연속 구간을 (시작, 끝, 길이) 로 반환."""
+    spans = []
+    start = None
+    for index, is_empty in enumerate(flags):
+        if not is_empty and start is None:
+            start = index
+        elif is_empty and start is not None:
+            spans.append((start, index - 1, index - start))
+            start = None
+    if start is not None:
+        spans.append((start, len(flags) - 1, len(flags) - start))
+    return spans
+
+
+def row_bands(width, height, mask):
+    """세로 방향으로 그림이 몰린 구간(행 밴드)을 찾는다.
+
+    세로로 완전히 비어 있는 행을 경계로 삼으면
+    스프라이트가 나란히 놓인 줄 단위로 나눌 수 있다.
+    """
+    row_empty = [
+        all(mask[y * width + x] == 0 for x in range(width))
+        for y in range(height)
+    ]
+    return occupied_spans(row_empty)
+
+
+def column_spans(width, height, mask):
+    """가로 방향으로 그림이 몰린 구간(열 밴드)을 찾는다."""
+    col_empty = [
+        all(mask[y * width + x] == 0 for y in range(height))
+        for x in range(width)
+    ]
+    return occupied_spans(col_empty)
