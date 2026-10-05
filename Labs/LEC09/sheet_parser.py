@@ -312,3 +312,72 @@ MIN_FRAME_AREA = 300
 def filter_noise(boxes, min_area=MIN_FRAME_AREA):
     """면적이 임계값 미만인 조각을 제거한다."""
     return [box for box in boxes if box["area"] >= min_area]
+
+
+MIN_FRAME_HEIGHT = 20
+"""스프라이트로 인정할 최소 높이(픽셀).
+
+시트에 섞인 글자(라벨)는 높이가 10~12픽셀 정도라
+이 기준으로 걸러낼 수 있다."""
+
+MIN_SEQUENCE_FRAMES = 3
+"""애니메이션으로 인정할 최소 프레임 수.
+
+이보다 적은 줄은 글자나 단독 아이콘으로 보고 제외한다."""
+
+HEIGHT_TOLERANCE = 0.25
+"""프레임 높이 허용 오차 비율.
+
+같은 줄에 서로 다른 애니메이션이 나란히 있을 수 있으므로
+기준 프레임 대비 높이 차이가 이 비율 이하면 같은 묶음으로 본다."""
+
+
+def cluster_by_height(boxes, tolerance=HEIGHT_TOLERANCE):
+    """한 줄 안의 프레임들을 높이가 비슷한 것끼리 묶는다.
+
+    이 시트는 한 줄에 서로 다른 애니메이션이 나란히 들어있는 경우가 있다.
+    (예: 키가 큰 캐릭터 프레임 옆에 낮게 깔린 프레임들)
+    """
+    clusters = []
+    for box in sorted(boxes, key=lambda b: b["x0"]):
+        for cluster in clusters:
+            reference = cluster[0]
+            if abs(box["height"] - reference["height"]) <= reference["height"] * tolerance:
+                cluster.append(box)
+                break
+        else:
+            clusters.append([box])
+    return clusters
+
+
+def group_sequences(width, height, mask, min_frames=MIN_SEQUENCE_FRAMES):
+    """시트 한 장을 애니메이션 시퀀스 목록으로 변환한다.
+
+    1) 완전히 빈 행을 경계로 줄 단위(행 밴드)를 나눈다.
+    2) 각 줄의 조각 중 충분히 큰 것만 프레임 후보로 남긴다.
+    3) 줄 안에서 높이가 비슷한 프레임끼리 묶어 하나의 애니메이션으로 본다.
+    4) 프레임이 너무 적은 묶음(글자 등)은 제외한다.
+    """
+    bands = row_bands(width, height, mask)
+    fragments = filter_noise(connected_boxes(width, height, mask))
+
+    sequences = []
+    for top, bottom, _band_height in bands:
+        members = [
+            box for box in fragments
+            if top <= box["y0"] and box["y1"] <= bottom
+            and box["height"] >= MIN_FRAME_HEIGHT
+        ]
+        if not members:
+            continue
+
+        for cluster in cluster_by_height(members):
+            if len(cluster) < min_frames:
+                continue
+            sequences.append({
+                "top": min(box["y0"] for box in cluster),
+                "bottom": max(box["y1"] for box in cluster),
+                "frames": sorted(cluster, key=lambda box: box["x0"]),
+            })
+
+    return sequences
