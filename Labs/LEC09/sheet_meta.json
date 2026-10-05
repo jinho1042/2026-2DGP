@@ -1,0 +1,673 @@
+{
+  "image": "sonic-sprite.png",
+  "sheet_width": 399,
+  "sheet_height": 525,
+  "animation_count": 10,
+  "total_frames": 73,
+  "animations": [
+    {
+      "name": "anim_01",
+      "index": 0,
+      "fps": 12,
+      "frame_count": 10,
+      "frames": [
+        {
+          "index": 0,
+          "left": 1,
+          "top": 39,
+          "width": 29,
+          "height": 39,
+          "area": 592
+        },
+        {
+          "index": 1,
+          "left": 31,
+          "top": 40,
+          "width": 26,
+          "height": 38,
+          "area": 565
+        },
+        {
+          "index": 2,
+          "left": 58,
+          "top": 39,
+          "width": 28,
+          "height": 39,
+          "area": 592
+        },
+        {
+          "index": 3,
+          "left": 86,
+          "top": 40,
+          "width": 30,
+          "height": 38,
+          "area": 590
+        },
+        {
+          "index": 4,
+          "left": 118,
+          "top": 40,
+          "width": 30,
+          "height": 38,
+          "area": 589
+        },
+        {
+          "index": 5,
+          "left": 150,
+          "top": 40,
+          "width": 30,
+          "height": 38,
+          "area": 591
+        },
+        {
+          "index": 6,
+          "left": 182,
+          "top": 40,
+          "width": 29,
+          "height": 38,
+          "area": 587
+        },
+        {
+          "index": 7,
+          "left": 211,
+          "top": 39,
+          "width": 29,
+          "height": 38,
+          "area": 577
+        },
+        {
+          "index": 8,
+          "left": 240,
+          "top": 39,
+          "width": 29,
+          "height": 38,
+          "area": 556
+        },
+        {
+          "index": 9,
+          "left": 270,
+          "top": 45,
+          "width": 24,
+          "height": 32,
+          "area": 525
+        }
+      ]
+    },
+    {
+      "name": "anim_02",
+      "index": 1,
+      "fps": 12,
+      "frame_count": 12,
+      "frames": [
+        {
+          "index": 0,
+          "left": 8,
+          "top": 80,
+          "width": 26,
+          "height": 37,
+          "area": 540
+        },
+        {
+          "index": 1,
+          "left": 37,
+          "top": 80,
+          "width": 27,
+          "height": 37,
+          "area": 597
+        },
+        {
+          "index": 2,
+          "left": 65,
+          "top": 80,
+          "width": 31,
+          "height": 38,
+          "area": 616
+        },
+        {
+          "index": 3,
+          "left": 97,
+          "top": 80,
+          "width": 37,
+          "height": 37,
+          "area": 688
+        },
+        {
+          "index": 4,
+          "left": 135,
+          "top": 80,
+          "width": 32,
+          "height": 35,
+          "area": 626
+        },
+        {
+          "index": 5,
+          "left": 170,
+          "top": 79,
+          "width": 32,
+          "height": 38,
+          "area": 623
+        },
+        {
+          "index": 6,
+          "left": 206,
+          "top": 79,
+          "width": 26,
+          "height": 38,
+          "area": 606
+        },
+        {
+          "index": 7,
+          "left": 238,
+          "top": 80,
+          "width": 24,
+          "height": 37,
+          "area": 583
+        },
+        {
+          "index": 8,
+          "left": 263,
+          "top": 80,
+          "width": 30,
+          "height": 37,
+          "area": 615
+        },
+        {
+          "index": 9,
+          "left": 295,
+          "top": 80,
+          "width": 36,
+          "height": 37,
+          "area": 656
+        },
+        {
+          "index": 10,
+          "left": 334,
+          "top": 80,
+          "width": 32,
+          "height": 36,
+          "area": 634
+        },
+        {
+          "index": 11,
+          "left": 370,
+          "top": 79,
+          "width": 29,
+          "height": 38,
+          "area": 630
+        }
+      ]
+    },
+    {
+      "name": "anim_03",
+      "index": 2,
+      "fps": 12,
+      "frame_count": 6,
+      "frames": [
+        {
+          "index": 0,
+          "left": 1,
+          "top": 124,
+          "width": 33,
+          "height": 40,
+          "area": 595
+        },
+        {
+          "index": 1,
+          "left": 39,
+          "top": 124,
+          "width": 35,
+          "height": 39,
+          "area": 574
+        },
+        {
+          "index": 2,
+          "left": 89,
+          "top": 125,
+          "width": 35,
+          "height": 38,
+          "area": 556
+        },
+        {
+          "index": 3,
+          "left": 130,
+          "top": 121,
+          "width": 34,
+          "height": 42,
+          "area": 598
+        },
+        {
+          "index": 4,
+          "left": 181,
+          "top": 122,
+          "width": 34,
+          "height": 41,
+          "area": 816
+        },
+        {
+          "index": 5,
+          "left": 228,
+          "top": 122,
+          "width": 33,
+          "height": 40,
+          "area": 619
+        }
+      ]
+    },
+    {
+      "name": "anim_04",
+      "index": 3,
+      "fps": 12,
+      "frame_count": 9,
+      "frames": [
+        {
+          "index": 0,
+          "left": 1,
+          "top": 169,
+          "width": 29,
+          "height": 30,
+          "area": 567
+        },
+        {
+          "index": 1,
+          "left": 36,
+          "top": 167,
+          "width": 28,
+          "height": 31,
+          "area": 568
+        },
+        {
+          "index": 2,
+          "left": 67,
+          "top": 169,
+          "width": 30,
+          "height": 29,
+          "area": 570
+        },
+        {
+          "index": 3,
+          "left": 98,
+          "top": 170,
+          "width": 31,
+          "height": 28,
+          "area": 572
+        },
+        {
+          "index": 4,
+          "left": 131,
+          "top": 168,
+          "width": 29,
+          "height": 30,
+          "area": 582
+        },
+        {
+          "index": 5,
+          "left": 162,
+          "top": 168,
+          "width": 29,
+          "height": 31,
+          "area": 594
+        },
+        {
+          "index": 6,
+          "left": 193,
+          "top": 170,
+          "width": 30,
+          "height": 29,
+          "area": 567
+        },
+        {
+          "index": 7,
+          "left": 230,
+          "top": 170,
+          "width": 31,
+          "height": 28,
+          "area": 567
+        },
+        {
+          "index": 8,
+          "left": 268,
+          "top": 170,
+          "width": 30,
+          "height": 30,
+          "area": 719
+        }
+      ]
+    },
+    {
+      "name": "anim_05",
+      "index": 4,
+      "fps": 12,
+      "frame_count": 6,
+      "frames": [
+        {
+          "index": 0,
+          "left": 1,
+          "top": 206,
+          "width": 30,
+          "height": 27,
+          "area": 564
+        },
+        {
+          "index": 1,
+          "left": 36,
+          "top": 206,
+          "width": 29,
+          "height": 27,
+          "area": 561
+        },
+        {
+          "index": 2,
+          "left": 70,
+          "top": 206,
+          "width": 29,
+          "height": 27,
+          "area": 561
+        },
+        {
+          "index": 3,
+          "left": 105,
+          "top": 206,
+          "width": 29,
+          "height": 27,
+          "area": 561
+        },
+        {
+          "index": 4,
+          "left": 139,
+          "top": 206,
+          "width": 29,
+          "height": 27,
+          "area": 561
+        },
+        {
+          "index": 5,
+          "left": 174,
+          "top": 206,
+          "width": 29,
+          "height": 27,
+          "area": 561
+        }
+      ]
+    },
+    {
+      "name": "anim_06",
+      "index": 5,
+      "fps": 12,
+      "frame_count": 6,
+      "frames": [
+        {
+          "index": 0,
+          "left": 1,
+          "top": 239,
+          "width": 29,
+          "height": 35,
+          "area": 613
+        },
+        {
+          "index": 1,
+          "left": 36,
+          "top": 239,
+          "width": 30,
+          "height": 35,
+          "area": 606
+        },
+        {
+          "index": 2,
+          "left": 74,
+          "top": 239,
+          "width": 31,
+          "height": 35,
+          "area": 663
+        },
+        {
+          "index": 3,
+          "left": 111,
+          "top": 238,
+          "width": 31,
+          "height": 36,
+          "area": 625
+        },
+        {
+          "index": 4,
+          "left": 149,
+          "top": 239,
+          "width": 30,
+          "height": 35,
+          "area": 636
+        },
+        {
+          "index": 5,
+          "left": 186,
+          "top": 238,
+          "width": 31,
+          "height": 36,
+          "area": 607
+        }
+      ]
+    },
+    {
+      "name": "anim_07",
+      "index": 6,
+      "fps": 12,
+      "frame_count": 6,
+      "frames": [
+        {
+          "index": 0,
+          "left": 1,
+          "top": 283,
+          "width": 29,
+          "height": 35,
+          "area": 613
+        },
+        {
+          "index": 1,
+          "left": 36,
+          "top": 283,
+          "width": 30,
+          "height": 35,
+          "area": 606
+        },
+        {
+          "index": 2,
+          "left": 72,
+          "top": 286,
+          "width": 39,
+          "height": 31,
+          "area": 685
+        },
+        {
+          "index": 3,
+          "left": 123,
+          "top": 285,
+          "width": 39,
+          "height": 32,
+          "area": 675
+        },
+        {
+          "index": 4,
+          "left": 172,
+          "top": 286,
+          "width": 39,
+          "height": 31,
+          "area": 701
+        },
+        {
+          "index": 5,
+          "left": 218,
+          "top": 285,
+          "width": 38,
+          "height": 32,
+          "area": 693
+        }
+      ]
+    },
+    {
+      "name": "anim_08",
+      "index": 7,
+      "fps": 12,
+      "frame_count": 6,
+      "frames": [
+        {
+          "index": 0,
+          "left": 1,
+          "top": 326,
+          "width": 24,
+          "height": 45,
+          "area": 542
+        },
+        {
+          "index": 1,
+          "left": 31,
+          "top": 327,
+          "width": 29,
+          "height": 44,
+          "area": 567
+        },
+        {
+          "index": 2,
+          "left": 65,
+          "top": 327,
+          "width": 20,
+          "height": 44,
+          "area": 534
+        },
+        {
+          "index": 3,
+          "left": 90,
+          "top": 327,
+          "width": 25,
+          "height": 43,
+          "area": 584
+        },
+        {
+          "index": 4,
+          "left": 119,
+          "top": 327,
+          "width": 25,
+          "height": 43,
+          "area": 584
+        },
+        {
+          "index": 5,
+          "left": 149,
+          "top": 327,
+          "width": 20,
+          "height": 44,
+          "area": 534
+        }
+      ]
+    },
+    {
+      "name": "anim_09",
+      "index": 8,
+      "fps": 12,
+      "frame_count": 8,
+      "frames": [
+        {
+          "index": 0,
+          "left": 1,
+          "top": 379,
+          "width": 27,
+          "height": 38,
+          "area": 568
+        },
+        {
+          "index": 1,
+          "left": 31,
+          "top": 379,
+          "width": 31,
+          "height": 36,
+          "area": 527
+        },
+        {
+          "index": 2,
+          "left": 64,
+          "top": 379,
+          "width": 31,
+          "height": 36,
+          "area": 527
+        },
+        {
+          "index": 3,
+          "left": 99,
+          "top": 377,
+          "width": 33,
+          "height": 38,
+          "area": 574
+        },
+        {
+          "index": 4,
+          "left": 136,
+          "top": 379,
+          "width": 32,
+          "height": 36,
+          "area": 591
+        },
+        {
+          "index": 5,
+          "left": 176,
+          "top": 379,
+          "width": 33,
+          "height": 36,
+          "area": 616
+        },
+        {
+          "index": 6,
+          "left": 217,
+          "top": 379,
+          "width": 33,
+          "height": 36,
+          "area": 604
+        },
+        {
+          "index": 7,
+          "left": 254,
+          "top": 378,
+          "width": 33,
+          "height": 36,
+          "area": 608
+        }
+      ]
+    },
+    {
+      "name": "anim_10",
+      "index": 9,
+      "fps": 12,
+      "frame_count": 4,
+      "frames": [
+        {
+          "index": 0,
+          "left": 6,
+          "top": 429,
+          "width": 34,
+          "height": 40,
+          "area": 633
+        },
+        {
+          "index": 1,
+          "left": 49,
+          "top": 426,
+          "width": 34,
+          "height": 43,
+          "area": 690
+        },
+        {
+          "index": 2,
+          "left": 96,
+          "top": 427,
+          "width": 23,
+          "height": 39,
+          "area": 628
+        },
+        {
+          "index": 3,
+          "left": 125,
+          "top": 427,
+          "width": 23,
+          "height": 39,
+          "area": 617
+        }
+      ]
+    }
+  ]
+}
