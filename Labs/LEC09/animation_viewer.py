@@ -139,7 +139,7 @@ SUB_LABEL = (146, 156, 180, 255)
 ACCENT = (120, 200, 255, 255)
 
 KEY_HELP = ("SPACE 일시정지 | . , 한 프레임 | N 다음 동작 | R 처음부터 | "
-            "LEFT/RIGHT 방향 전환 | UP/DOWN 크기 | [ ] 속도 | 0 기본 | ESC 종료")
+            "LEFT/RIGHT 방향 | UP/DOWN 크기 | [ ] 속도 | O 시트 | 0 기본 | ESC 종료")
 
 
 def draw_ui(fonts, player, state):
@@ -244,6 +244,8 @@ def handle_events(player, state):
             state["fps"] = max(state["fps"] - FPS_STEP, MIN_FPS)
         elif key == pico2d.SDLK_RIGHTBRACKET:
             state["fps"] = min(state["fps"] + FPS_STEP, MAX_FPS)
+        elif key == pico2d.SDLK_o:
+            state["overlay"] = not state["overlay"]
 
     return True
 
@@ -280,6 +282,32 @@ def draw_strip(animation, current_frame):
             w, h,
         )
         x += cell + gap
+
+
+def draw_sheet_overlay(animation, current_frame, alpha=90):
+    """원본 스프라이트 시트를 구석에 작게 띄워 기준점을 보여준다.
+
+    파싱이 올바른지 눈으로 확인할 수 있도록 실제 시트 영역을
+    축소해 그리고, 현재 프레임 위치에 상자를 겹쳐 표시한다.
+    """
+    scale = 200.0 / animation.sheet.h
+    sw = animation.sheet.w * scale
+    sh = animation.sheet.h * scale
+    x0, y0 = 26, 26
+
+    pico2d.draw_rectangle(x0 - 4, y0 - 4, x0 + sw + 4, y0 + sh + 4,
+                          12, 14, 20, 220, True)
+    animation.sheet.composite_draw(0, "", x0 + sw / 2, y0 + sh / 2, sw, sh)
+
+    info = animation.frame(current_frame)
+    pico2d.draw_rectangle(
+        x0 + info["left"] * scale,
+        y0 + (animation.sheet.h - info["top"] - info["height"]) * scale,
+        x0 + (info["left"] + info["width"]) * scale,
+        y0 + (animation.sheet.h - info["top"]) * scale,
+        *ACCENT, 255, False,
+    )
+    return x0, y0, sw, sh
 
 
 def frame_scale(animation):
@@ -429,6 +457,7 @@ def main():
         "step_mode": False,
         "scale": 1.0,
         "fps": DEFAULT_FPS,
+        "overlay": True,
     }
 
     running = True
@@ -446,6 +475,8 @@ def main():
         draw_frame(player.current, player.frame, state["flip"],
                    state["scale"])
         draw_strip(player.current, player.frame)
+        if state["overlay"]:
+            draw_sheet_overlay(player.current, player.frame)
         draw_ui(fonts, player, state)
         pico2d.update_canvas()
 
