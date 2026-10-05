@@ -23,6 +23,13 @@ CANVAS_W, CANVAS_H = 1200, 800
 REPEAT_COUNT = 5
 """각 애니메이션을 반복 재생할 횟수."""
 
+DEFAULT_FPS = 12
+"""기본 재생 속도(프레임/초)."""
+
+FPS_STEP = 2
+MIN_FPS = 2
+MAX_FPS = 60
+
 FRAME_DURATION = 1.0 / 12
 """프레임 하나를 화면에 유지하는 시간(초)."""
 
@@ -200,10 +207,6 @@ def draw_ui(fonts, player, state):
 ZOOM_STEP = 0.1
 MIN_ZOOM = 0.5
 MAX_ZOOM = 1.6
-
-FPS_STEP = 2
-MIN_FPS = 2
-MAX_FPS = 60
 
 
 def handle_events(player, state):
@@ -438,12 +441,14 @@ class Player:
 
 def main():
     meta = load_meta()
+
+    # SDL 렌더러는 open_canvas 안에서 만들어지므로 캔버스를 먼저 연다.
+    pico2d.open_canvas(CANVAS_W, CANVAS_H)
+    set_window_title("LEC09 Animation Viewer")
+
     sheet = pico2d.load_image(os.path.join(BASE_DIR, meta["image"]))
     print(f"시트 {meta['image']}  애니메이션 {meta['animation_count']}개 "
           f"프레임 {meta['total_frames']}개")
-
-    pico2d.open_canvas(CANVAS_W, CANVAS_H)
-    set_window_title("LEC09 Animation Viewer")
 
     animations = load_animations(meta, sheet)
     player = Player(animations)

@@ -220,6 +220,28 @@ def check_render():
     return problems
 
 
+def check_entrypoint():
+    """main() 이 캔버스를 연 뒤에 시트를 읽는지 확인한다.
+
+    pico2d.load_image 는 open_canvas 로 만들어진 SDL 렌더러가 필요하므로
+    순서가 뒤바뀌면 NameError(renderer)로 죽는다.
+    """
+    import inspect
+
+    import animation_viewer as av
+
+    source = inspect.getsource(av.main)
+    open_at = source.find("open_canvas")
+    load_at = source.find("load_image")
+
+    if open_at < 0 or load_at < 0:
+        return ["main() 에서 open_canvas 또는 load_image 를 찾지 못함"]
+    if load_at < open_at:
+        return ["main() 이 load_image 를 open_canvas 보다 먼저 호출함 "
+                "(renderer 미생성으로 NameError)"]
+    return []
+
+
 def main():
     if not os.path.exists(META_PATH):
         print(f"메타데이터 없음: {META_PATH}")
@@ -260,6 +282,11 @@ def main():
     render_problems = check_render()
     problems += render_problems
     print(f"[{'OK' if not render_problems else 'FAIL'}] 전체 프레임 렌더링")
+
+    entry_problems = check_entrypoint()
+    problems += entry_problems
+    print(f"[{'OK' if not entry_problems else 'FAIL'}] 실행 순서 "
+          f"(캔버스 → 시트 로드)")
 
     print("-" * 58)
     if problems:
