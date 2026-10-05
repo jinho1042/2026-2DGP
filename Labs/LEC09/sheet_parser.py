@@ -300,3 +300,15 @@ def connected_boxes(width, height, mask, region=None):
             })
 
     return boxes
+
+
+MIN_FRAME_AREA = 300
+"""한 프레임으로 인정할 최소 픽셀 수.
+
+이 값보다 작은 조각은 1~2픽셀짜리 반투명 잔상이나
+스프라이트 사이로 새어 나온 아티팩트로 보고 버린다."""
+
+
+def filter_noise(boxes, min_area=MIN_FRAME_AREA):
+    """면적이 임계값 미만인 조각을 제거한다."""
+    return [box for box in boxes if box["area"] >= min_area]
