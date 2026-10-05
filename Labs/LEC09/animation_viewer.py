@@ -139,10 +139,10 @@ SUB_LABEL = (146, 156, 180, 255)
 ACCENT = (120, 200, 255, 255)
 
 KEY_HELP = ("SPACE 일시정지 | . , 한 프레임 | N 다음 동작 | R 처음부터 | "
-            "LEFT/RIGHT 방향 전환 | UP/DOWN 크기 | 0 기본 | ESC 종료")
+            "LEFT/RIGHT 방향 전환 | UP/DOWN 크기 | [ ] 속도 | 0 기본 | ESC 종료")
 
 
-def draw_ui(fonts, player, paused, step_mode, scale_ratio):
+def draw_ui(fonts, player, state):
     """상단 상태 바와 하단 도움말을 그린다."""
     title_font, info_font, small_font = fonts
     if not info_font:
@@ -163,10 +163,12 @@ def draw_ui(fonts, player, paused, step_mode, scale_ratio):
         title_font.draw(CANVAS_W - 130, CANVAS_H - 46, order,
                         SUB_LABEL[:3], align="right")
 
-    mode = "정지" if paused else ("프레임" if step_mode else "재생")
+    mode = "정지" if state["paused"] else ("프레임" if state["step_mode"] else "재생")
     info_font.draw(CANVAS_W / 2, CANVAS_H - 74, player.status_text(),
                    SUB_LABEL[:3], align="center")
-    info_font.draw(40, CANVAS_H - 74, f"모드 {mode}", SUB_LABEL[:3])
+    info_font.draw(40, CANVAS_H - 74,
+                   f"모드 {mode}   속도 {state['fps']} fps",
+                   SUB_LABEL[:3])
 
     # 반복 진행 표시: 6칸(5회 반복 + 1회 추가)
     bar_w, bar_h, gap = 26, 8, 8
@@ -185,7 +187,7 @@ def draw_ui(fonts, player, paused, step_mode, scale_ratio):
         small_font.draw(CANVAS_W / 2, CANVAS_H - 118, KEY_HELP,
                         SUB_LABEL[:3], align="center")
         small_font.draw(40, 34,
-                        f"크기 {scale_ratio:.0%}   "
+                        f"크기 {state['scale']:.0%}   "
                         f"프레임 {animation.frame(player.frame)['width']}x"
                         f"{animation.frame(player.frame)['height']}",
                         SUB_LABEL[:3])
@@ -194,6 +196,10 @@ def draw_ui(fonts, player, paused, step_mode, scale_ratio):
 ZOOM_STEP = 0.1
 MIN_ZOOM = 0.5
 MAX_ZOOM = 1.6
+
+FPS_STEP = 2
+MIN_FPS = 2
+MAX_FPS = 60
 
 
 def handle_events(player, state):
@@ -234,6 +240,10 @@ def handle_events(player, state):
             state["scale"] = max(state["scale"] - ZOOM_STEP, MIN_ZOOM)
         elif key == pico2d.SDLK_0:
             state["scale"] = 1.0
+        elif key == pico2d.SDLK_LEFTBRACKET:
+            state["fps"] = max(state["fps"] - FPS_STEP, MIN_FPS)
+        elif key == pico2d.SDLK_RIGHTBRACKET:
+            state["fps"] = min(state["fps"] + FPS_STEP, MAX_FPS)
 
     return True
 
@@ -327,15 +337,21 @@ class Player:
     def current(self):
         return self.animations[self.anim_index]
 
-    def update(self, dt):
-        """시간을 dt 초만큼 진행시킨다."""
+    def update(self, dt, fps=None):
+        """시간을 dt 초만큼 진행시킨다.
+
+        fps 가 주어지면 그 속도로, 아니면 기본 FRAME_DURATION 으로 간다.
+        프레임 수가 다른 애니메이션도 같은 속도로 재생되도록
+        시간 기반(고정 스텝)으로 계산한다.
+        """
         if self.frozen:
             return
 
+        frame_duration = 1.0 / fps if fps else FRAME_DURATION
         self.timer += dt
 
-        while self.timer >= FRAME_DURATION:
-            self.timer -= FRAME_DURATION
+        while self.timer >= frame_duration:
+            self.timer -= frame_duration
             self.frame += 1
 
             if self.frame >= self.current.count:
@@ -412,6 +428,7 @@ def main():
         "paused": False,
         "step_mode": False,
         "scale": 1.0,
+        "fps": DEFAULT_FPS,
     }
 
     running = True
@@ -421,7 +438,7 @@ def main():
             break
 
         now = pico2d.get_time()
-        player.update(now - last_time)
+        player.update(now - last_time, state["fps"])
         last_time = now
 
         pico2d.clear_canvas()
@@ -429,8 +446,7 @@ def main():
         draw_frame(player.current, player.frame, state["flip"],
                    state["scale"])
         draw_strip(player.current, player.frame)
-        draw_ui(fonts, player, state["paused"], state["step_mode"],
-                state["scale"])
+        draw_ui(fonts, player, state)
         pico2d.update_canvas()
 
     pico2d.close_canvas()
